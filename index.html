@@ -1,95 +1,165 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <link href="index.css" rel="stylesheet" />
-    <title>miniapp</title>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
-    />
-    <script>
-      function formatQuery() {
-        var url = window.location.href;
-        var index = url.lastIndexOf('?');
-        var queryMap = {};
-        if (index > -1) {
-          var queryStr = url.slice(index + 1);
-          var queryList = queryStr.split('&');
-          for (var i = 0; i < queryList.length; i++) {
-            var value = queryList[i];
-            var item = value.split('=');
-            var key = item[0] || '';
-            var val = decodeURIComponent(item[1] || '');
-            queryMap[key] = val;
-          }
-        }
-        return queryMap;
-      }
-      var queryMap = formatQuery();
-      document.documentElement.style.backgroundColor = queryMap.bgColor;
-      if (queryMap._transsion_dlt_miniapp_dark_theme_is_enabled == 1) {
-        var classVal = document.documentElement.getAttribute('class');
-        if (!classVal) {
-          classVal = 'dlt-dark__mode';
-        } else {
-          classVal = classVal.concat(' dlt-dark__mode');
-        }
-        document.documentElement.setAttribute('class', classVal);
-      }
-      (function (global) {
-        global.feRenderPreloadStart = Date.now();
-      })(window);
-    </script>
-  </head>
-  <body>
-    <div id="dlt-skeleton-type-1" class="dlt-skeleton-type-1">
-      <div class="dlt-skeleton-block">
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph short"></div>
-      </div>
-      <div class="dlt-skeleton-block">
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph short"></div>
-      </div>
-      <div class="dlt-skeleton-block">
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph short"></div>
-      </div>
-      <div class="dlt-skeleton-block">
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph short"></div>
-      </div>
-    </div>
-    <div id="dlt-skeleton-type-2" class="dlt-skeleton-type-2">
-      <div class="dlt-skeleton-box">
-        <div class="dlt-skeleton-square"></div>
-      </div>
-      <div class="dlt-skeleton-box">
-        <div class="dlt-skeleton-square short"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph short"></div>
-      </div>
-      <div class="dlt-skeleton-box">
-        <div class="dlt-skeleton-square short"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph"></div>
-        <div class="dlt-skeleton-paragraph short"></div>
-      </div>
-      <div class="dlt-skeleton-box">
-        <div class="dlt-skeleton-square"></div>
-      </div>
-    </div>
-    <script type="text/javascript" src="render.js"></script>
-    <script type="text/javascript">
-      (function (global) {
-        global.feSlavePreloadEnd = Date.now();
-      })(window);
-    </script>
-  </body>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f5e4b">
+<title>Life in Derick’s day</title>
+<style>
+:root{--bg:#f3f1ec;--card:#fff;--ink:#1d2421;--mut:#6b7570;--line:#dcd8cf;--ac:#1f5e4b;--acs:#dcebe5;--warn:#b4531a;--bad:#a8322d;--good:#1f7a4d;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--card:#1b2220;--ink:#e8ece9;--mut:#93a09a;--line:#2d3733;--ac:#5fc29d;--acs:#23362f;--warn:#e29a5f;--bad:#e8837d;--good:#6fd09b}}
+:root[data-theme="dark"]{--bg:#121715;--card:#1b2220;--ink:#e8ece9;--mut:#93a09a;--line:#2d3733;--ac:#5fc29d;--acs:#23362f;--warn:#e29a5f;--bad:#e8837d;--good:#6fd09b}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Georgia,"Times New Roman",serif;padding-bottom:80px}
+h1,h2,h3,button,input,select,nav,.sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:4px 0 2px}h2{font-size:1.05rem;margin:22px 0 8px}
+.sub{color:var(--mut);font-size:.9rem;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0}
+.row{display:flex;align-items:center;gap:10px}.row>.g{flex:1;min-width:0}
+.mut{color:var(--mut);font-size:.85rem}
+.alert{border-left:4px solid var(--warn);background:var(--card);border-radius:6px;padding:9px 12px;margin:6px 0;font-size:.92rem}
+.alert.bad{border-color:var(--bad)}.alert.ok{border-color:var(--good)}
+input,select{font-size:1rem;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.f .w{grid-column:1/-1}
+button{font-size:.95rem;padding:9px 14px;border-radius:8px;border:1px solid var(--ac);background:var(--ac);color:#fff;cursor:pointer}
+@media (prefers-color-scheme:dark){button{color:#10201a}}
+button.s{background:transparent;color:var(--ac)}button.x{background:none;border:0;color:var(--mut);padding:4px 8px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;background:none;border:0;color:var(--mut);border-radius:0;padding:13px 2px;font-size:.82rem}
+nav button.on{color:var(--ac);font-weight:700;box-shadow:inset 0 3px 0 var(--ac)}
+.bar{height:8px;background:var(--acs);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.done{text-decoration:line-through;color:var(--mut)}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.cal b{font:600 .72rem system-ui;color:var(--mut)}
+.cal button{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:8px 0;font-size:.9rem;position:relative}
+.cal button.t{border-color:var(--ac);font-weight:700}.cal button.sel{background:var(--ac);color:#fff}
+.cal button.dot::after{content:"";position:absolute;bottom:3px;left:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:var(--warn)}
+.inc{color:var(--good)}.exp{color:var(--bad)}
+.tabs{display:flex;gap:6px;margin:8px 0}.tabs button{flex:1}.brand{display:flex;align-items:center;gap:10px}.brand svg{width:46px;height:46px;flex:none}a.btn{display:inline-block;font:.95rem system-ui,sans-serif;padding:9px 14px;border-radius:8px;background:var(--ac);color:#fff;text-decoration:none}@media (prefers-color-scheme:dark){a.btn{color:#10201a}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="nav"></nav>
+<script>
+var K="lifeplanner.v1",T="today",sel=td(),cm=td().slice(0,7),txType="expense";
+function def(){return{tasks:[],events:[],contacts:[],tx:[],set:{budget:0,goal:0},notified:""}}
+var S=(function(){try{var d=JSON.parse(localStorage.getItem(K));return d&&d.tasks?d:def()}catch(e){return def()}})();
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+var LOGO="<svg viewBox='0 0 120 120' role='img' aria-label='Life in Derick’s day logo'><defs><linearGradient id='lg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#4b2fb8'/><stop offset='1' stop-color='#0e9f94'/></linearGradient></defs><rect width='120' height='120' rx='27' fill='url(#lg)'/><circle cx='60' cy='60' r='46' fill='#fff' fill-opacity='.14' stroke='#fff' stroke-opacity='.55' stroke-width='3'/><path d='M60 17v7M60 96v7M17 60h7M96 60h7' stroke='#fff' stroke-opacity='.7' stroke-width='3' stroke-linecap='round'/><path d='M60 60L44 44M60 60L82 40' stroke='#fff' stroke-opacity='.85' stroke-width='4' stroke-linecap='round'/><rect x='20' y='88' width='21' height='16' rx='2' fill='#ff7a59'/><rect x='41' y='74' width='21' height='30' fill='#ffc233'/><rect x='62' y='60' width='21' height='44' fill='#37c97f'/><rect x='83' y='46' width='21' height='58' rx='2' fill='#ff5fa2'/><path d='M40 60Q62 34 86 33' stroke='#ffe066' stroke-width='1.8' stroke-dasharray='1 4' stroke-linecap='round' fill='none'/><polygon points='94,25 96,30.25 101.6,30.5 97.2,34 98.7,39.5 94,36.4 89.3,39.5 90.8,34 86.4,30.5 92,30.25' fill='#ffe066'/><ellipse cx='27' cy='87' rx='3.2' ry='2' fill='#ffd9b8'/><ellipse cx='34' cy='87' rx='3.2' ry='2' fill='#ffd9b8'/><ellipse cx='30.5' cy='80' rx='6.5' ry='7' fill='#fff'/><path d='M35 78l6-9M26 79l-2 4' stroke='#ffd9b8' stroke-width='3' stroke-linecap='round'/><circle cx='30.5' cy='67' r='7.5' fill='#ffd9b8'/><path d='M29 60c1-3 4-3 5 0' stroke='#6b3f1d' stroke-width='1.6' fill='none' stroke-linecap='round'/><circle cx='28' cy='66' r='1.9' fill='#fff'/><circle cx='33' cy='66' r='1.9' fill='#fff'/><circle cx='28.7' cy='65.3' r='1' fill='#222'/><circle cx='33.7' cy='65.3' r='1' fill='#222'/><path d='M28.5 70q2 1.6 4 0' stroke='#b5533c' stroke-width='1.2' fill='none' stroke-linecap='round'/></svg>";
+function setIcons(){try{var u="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(LOGO.replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" '));var l=document.createElement("link");l.rel="icon";l.href=u;document.head.appendChild(l);var im=new Image();im.onload=function(){try{var c=document.createElement("canvas");c.width=c.height=180;c.getContext("2d").drawImage(im,0,0,180,180);var a=document.createElement("link");a.rel="apple-touch-icon";a.href=c.toDataURL("image/png");document.head.appendChild(a)}catch(e){}};im.src=u}catch(e){}}
+function fix(){S.pool=S.pool||[];S.daily=S.daily||{date:"",ids:[]}}fix();function pad(n){return(n<10?"0":"")+n}
+function iso(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function td(){return iso(new Date())}
+function pd(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2])}
+function add(s,n){var d=pd(s);d.setDate(d.getDate()+n);return iso(d)}
+function diff(a,b){return Math.round((pd(b)-pd(a))/864e5)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function v(id){return document.getElementById(id).value.trim()}
+function money(n){return(n<0?"-":"")+Math.abs(n).toLocaleString(undefined,{maximumFractionDigits:2})}
+function nice(s){return pd(s).toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"})}
+var CATS={Food:"food lunch dinner breakfast grocer restaurant coffee snack meal",Transport:"bus taxi uber fuel petrol diesel fare transport ride train",Bills:"electric water internet rent wifi airtime data bill subscription",Health:"medic pharmacy doctor hospital clinic drug",Education:"school fees book tuition course exam",Shopping:"cloth shoe shop mall market buy",Family:"gift mother father brother sister family support",Fun:"movie game party cinema trip outing"};
+function guess(n){n=n.toLowerCase();for(var c in CATS){var w=CATS[c].split(" ");for(var i=0;i<w.length;i++)if(n.indexOf(w[i])>-1)return c}return"Other"}
+function nextOcc(e){if(!e.yearly)return e.date;var d=pd(e.date),t=pd(td()),n=new Date(t.getFullYear(),d.getMonth(),d.getDate());if(n<t)n=new Date(t.getFullYear()+1,d.getMonth(),d.getDate());return iso(n)}
+function callDue(c){return c.last?add(c.last,c.freq):td()}
+function monthTx(){return S.tx.filter(function(x){return x.date.slice(0,7)==td().slice(0,7)})}
+function sums(){var i=0,e=0,cat={};monthTx().forEach(function(x){if(x.type=="income")i+=x.amt;else{e+=x.amt;cat[x.cat]=(cat[x.cat]||0)+x.amt}});return{i:i,e:e,s:i-e,cat:cat}}
+function alerts(){var a=[],t=td(),m=sums();
+S.tasks.filter(function(x){return!x.done&&x.date<t}).forEach(function(x){a.push(["bad","Overdue: "+x.title+" ("+nice(x.date)+")"])});
+S.events.forEach(function(e){var d=diff(t,nextOcc(e));if(d>=0&&d<=7)a.push(["",(d==0?"Today":d==1?"Tomorrow":"In "+d+" days")+": "+e.title])});
+S.contacts.forEach(function(c){if(callDue(c)<=t)a.push(["",(diff(callDue(c),t)>0?"Call overdue: ":"Call today: ")+c.name])});
+picks().forEach(function(p){if(p.last!=t)a.push(["","Call today: "+p.name])});var b=S.set.budget;if(b>0){if(m.e>b)a.push(["bad","Over budget by "+money(m.e-b)+" this month"]);else if(m.e>=b*.8)a.push(["","You have used "+Math.round(m.e/b*100)+"% of this month’s budget"])}
+if(S.set.goal>0&&m.s<S.set.goal&&new Date().getDate()>=20)a.push(["","Savings "+money(m.s)+" of "+money(S.set.goal)+" goal, month is nearly over"]);
+return a}
+function notify(){if(!("Notification"in window)||Notification.permission!="granted"||S.notified==td())return;var a=alerts();if(!a.length)return;S.notified=td();save();try{new Notification("Life in Derick’s day",{body:a.slice(0,4).map(function(x){return x[1]}).join("\n")})}catch(e){}}
+function ask(){if(!("Notification"in window))return alert("This browser does not support notifications.");Notification.requestPermission().then(function(){notify();render()})}
+function go(t){T=t;render()}
+function tasksOn(d){return S.tasks.filter(function(x){return x.date==d})}
+function eventsOn(d){return S.events.filter(function(e){return e.yearly?e.date.slice(5)==d.slice(5):e.date==d})}
+function taskRow(x){return'<div class="card row"><input type="checkbox" '+(x.done?"checked":"")+' onchange="tog(\''+x.id+'\')"><div class="g '+(x.done?"done":"")+'">'+esc(x.title)+'<div class="mut">'+nice(x.date)+(x.time?" · "+x.time:"")+'</div></div><button class="x" onclick="del(\'tasks\',\''+x.id+'\')">✕</button></div>'}
+function tog(id){S.tasks.forEach(function(x){if(x.id==id)x.done=!x.done});save();render()}
+function del(k,id){S[k]=S[k].filter(function(x){return x.id!=id});save();render()}
+function addTask(d){var t=v("tt");if(!t)return;S.tasks.push({id:uid(),title:t,date:d||v("td")||td(),time:v("tm"),done:false});save();render()}
+function addEvent(){var t=v("et"),d=v("ed");if(!t||!d)return;S.events.push({id:uid(),title:t,date:d,yearly:v("ey")=="y"});save();render()}
+function addContact(){var n=v("cn");if(!n)return;S.contacts.push({id:uid(),name:n,rel:v("cr"),freq:+v("cf")||7,last:""});save();render()}
+function called(id){S.contacts.forEach(function(c){if(c.id==id)c.last=td()});save();render()}
+function addTx(){var a=parseFloat(v("xa")),n=v("xn");if(!a||a<=0)return;var c=txType=="income"?"Income":(v("xc")||guess(n));S.tx.push({id:uid(),type:txType,amt:a,note:n,cat:c,date:v("xd")||td()});save();render()}
+function setBG(){S.set.budget=parseFloat(v("sb"))||0;S.set.goal=parseFloat(v("sg"))||0;save();render()}
+function setType(t){txType=t;render()}
+function exportData(){var b=new Blob([JSON.stringify(S)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="life-in-dericks-day-backup.json";a.click()}
+function importData(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.tasks){S=d;fix();save();render()}else alert("Not a Life Planner backup.")}catch(x){alert("Could not read that file.")}};r.readAsText(f)}
+function pickDay(d){sel=d;render()}
+function shift(n){var p=cm.split("-");var d=new Date(+p[0],+p[1]-1+n,1);cm=d.getFullYear()+"-"+pad(d.getMonth()+1);render()}
+
+function rand(n){var t=td(),c=S.pool.filter(function(p){return!p.last||diff(p.last,t)>=7});if(c.length<n)c=S.pool.slice();for(var i=c.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=c[i];c[i]=c[j];c[j]=x}return c.slice(0,n).map(function(p){return p.id})}
+function picks(){var t=td();fix();if(S.pool.length&&(S.daily.date!=t||!S.daily.ids.length)){S.daily={date:t,ids:rand(2)};save()}return S.daily.ids.map(function(id){return S.pool.filter(function(p){return p.id==id})[0]}).filter(Boolean)}
+function reroll(){S.daily={date:td(),ids:rand(2)};save();render()}
+function poolCalled(id){S.pool.forEach(function(p){if(p.id==id)p.last=td()});save();render()}
+function clearPool(){if(confirm("Remove all imported contacts?")){S.pool=[];S.daily={date:"",ids:[]};save();render()}}
+function addPool(list){var n=0;list.forEach(function(c){var nm=c.name||c.tel;if(!nm)return;if(S.pool.some(function(p){return p.name==nm&&p.tel==(c.tel||"")}))return;S.pool.push({id:uid(),name:nm,tel:c.tel||"",last:""});n++});save();render();alert(n+" contacts added.")}
+function pickContacts(){navigator.contacts.select(["name","tel"],{multiple:true}).then(function(r){addPool(r.map(function(c){return{name:(c.name&&c.name[0])||"",tel:(c.tel&&c.tel[0])||""}}))}).catch(function(){})}
+function importVcf(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var out=[],cards=String(r.result).split(/BEGIN:VCARD/i).slice(1);cards.forEach(function(c){var fn=c.match(/^FN[^:]*:(.*)$/im),tl=c.match(/^TEL[^:]*:(.*)$/im);out.push({name:fn?fn[1].trim():"",tel:tl?tl[1].trim():""})});addPool(out)};r.readAsText(f)}
+function vPicks(){var t=td(),p=picks(),h='<h2>People to call today</h2>';if(!S.pool.length)return h+'<div class="card"><p class="mut" style="margin:0 0 8px">Import your contacts and two people will be picked for you each day.</p><button onclick="go(\'calls\')">Import contacts</button></div>';h+=p.map(function(c){return'<div class="card row"><div class="g '+(c.last==t?'done':'')+'"><b class="sans">'+esc(c.name)+'</b></div>'+(c.tel?'<a class="btn" href="tel:'+esc(c.tel)+'">Call</a>':'')+(c.last==t?'':'<button class="s" onclick="poolCalled(\''+c.id+'\')">Done</button>')+'</div>'}).join('');return h+'<button class="s" onclick="reroll()">Pick different people</button>'}
+function vToday(){var t=td(),list=tasksOn(t),dn=list.filter(function(x){return x.done}).length,al=alerts();
+var h='<h1 class="brand">'+LOGO+'<span>Life in Derick’s day</span></h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
+h+=al.length?al.map(function(a){return'<div class="alert '+a[0]+'">'+esc(a[1])+'</div>'}).join(""):'<div class="alert ok">Nothing needs your attention right now.</div>';
+if(window.Notification&&Notification.permission!="granted")h+='<button class="s" onclick="ask()">Turn on daily reminder alerts</button>';
+h+=vPicks();h+='<h2>Today’s plan: '+dn+' of '+list.length+' done</h2><div class="bar"><i style="width:'+(list.length?dn/list.length*100:0)+'%"></i></div>';
+h+=list.length?list.map(taskRow).join(""):'<p class="mut">No activities planned for today. Add one below.</p>';
+h+='<div class="card"><input id="tt" placeholder="New activity"><div class="f"><input id="td" type="date" value="'+t+'"><input id="tm" type="time"><button class="w" onclick="addTask()">Add activity</button></div></div>';
+var ev=eventsOn(t);if(ev.length)h+='<h2>Events today</h2>'+ev.map(function(e){return'<div class="card">'+esc(e.title)+'</div>'}).join("");
+var od=S.tasks.filter(function(x){return!x.done&&x.date<t});if(od.length)h+='<h2>Undone from earlier days</h2>'+od.map(taskRow).join("");
+return h}
+
+function vCal(){var p=cm.split("-"),y=+p[0],m=+p[1]-1,first=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),t=td();
+var h='<h1>Calendar</h1><div class="row sans"><button class="s" onclick="shift(-1)">‹</button><div class="g" style="text-align:center"><b>'+new Date(y,m,1).toLocaleDateString(undefined,{month:"long",year:"numeric"})+'</b></div><button class="s" onclick="shift(1)">›</button></div><div class="cal" style="margin-top:8px">';
+"SMTWTFS".split("").forEach(function(d){h+="<b>"+d+"</b>"});
+for(var i=0;i<first;i++)h+="<span></span>";
+for(var d=1;d<=n;d++){var s=cm+"-"+pad(d),c=(s==t?"t ":"")+(s==sel?"sel ":"")+((tasksOn(s).length||eventsOn(s).length)?"dot":"");h+='<button class="'+c+'" onclick="pickDay(\''+s+'\')">'+d+'</button>'}
+h+='</div><h2>'+nice(sel)+'</h2>';
+var tk=tasksOn(sel),ev=eventsOn(sel);
+h+=ev.map(function(e){return'<div class="card">'+esc(e.title)+(e.yearly?' <span class="mut">(yearly)</span>':"")+'</div>'}).join("");
+h+=tk.length?tk.map(taskRow).join(""):(ev.length?"":'<p class="mut">Nothing planned for this day.</p>');
+h+='<div class="card"><input id="tt" placeholder="Add activity for this day"><div class="f"><input id="tm" type="time"><button onclick="addTask(\''+sel+'\')">Add</button></div></div>';
+h+='<h2>Add an event</h2><div class="card"><input id="et" placeholder="Birthday, anniversary, appointment…"><div class="f"><input id="ed" type="date" value="'+sel+'"><select id="ey"><option value="y">Repeats every year</option><option value="n">One time</option></select><button class="w" onclick="addEvent()">Save event</button></div></div>';
+var up=S.events.map(function(e){return{e:e,n:nextOcc(e)}}).filter(function(o){return diff(t,o.n)>=0}).sort(function(a,b){return a.n<b.n?-1:1}).slice(0,8);
+if(up.length)h+='<h2>Coming up</h2>'+up.map(function(o){var d=diff(t,o.n);return'<div class="card row"><div class="g">'+esc(o.e.title)+'<div class="mut">'+nice(o.n)+' · '+(d==0?"today":d+" days")+'</div></div><button class="x" onclick="del(\'events\',\''+o.e.id+'\')">✕</button></div>'}).join("");
+return h}
+
+function vCalls(){var t=td(),cs=S.contacts.slice().sort(function(a,b){return callDue(a)<callDue(b)?-1:1});
+var h='<h1>Calls</h1><p class="sub">Set how often you want to call each person. The app tells you who is due.</p>';
+h+=cs.length?cs.map(function(c){var d=diff(t,callDue(c));var st=d<0?'<span class="exp">overdue by '+(-d)+' day'+(d==-1?"":"s")+'</span>':d==0?'<b>call today</b>':'next in '+d+' days';
+return'<div class="card row"><div class="g"><b class="sans">'+esc(c.name)+'</b> <span class="mut">'+esc(c.rel)+'</span><div class="mut">Every '+c.freq+' days · last: '+(c.last?nice(c.last):"never")+' · '+st+'</div></div><button onclick="called(\''+c.id+'\')">Called</button><button class="x" onclick="del(\'contacts\',\''+c.id+'\')">✕</button></div>'}).join(""):'<p class="mut">No one added yet.</p>';
+h+='<h2>Contacts for daily calls</h2><div class="card"><p class="mut" style="margin:0 0 8px">'+S.pool.length+' contacts imported. Two are picked at random each day.</p>'+(("contacts"in navigator&&"ContactsManager"in window)?'<button onclick="pickContacts()">Choose from phone contacts</button>':'<p class="mut">This browser cannot open your contact list. Import a .vcf file instead.</p>')+'<p class="mut" style="margin-bottom:4px">Import a .vcf contacts file</p><input type="file" accept=".vcf,text/vcard" onchange="importVcf(event)"><button class="x" onclick="clearPool()">Remove all imported</button></div>';h+='<h2>Add a person</h2><div class="card"><input id="cn" placeholder="Name"><div class="f"><input id="cr" placeholder="Mother, friend…"><input id="cf" type="number" min="1" placeholder="Call every (days)" value="7"><button class="w" onclick="addContact()">Add to call schedule</button></div></div>';
+return h}
+
+function vMoney(){var m=sums(),b=S.set.budget,g=S.set.goal;
+var h='<h1>Finance</h1><p class="sub">This month</p><div class="card"><div class="row"><div class="g">Income<br><b class="inc sans">'+money(m.i)+'</b></div><div class="g">Spent<br><b class="exp sans">'+money(m.e)+'</b></div><div class="g">Saved<br><b class="sans">'+money(m.s)+'</b></div></div>';
+if(b>0)h+='<div class="mut" style="margin-top:10px">Budget: '+money(m.e)+' of '+money(b)+'</div><div class="bar"><i style="width:'+Math.min(100,m.e/b*100)+'%;background:'+(m.e>b?"var(--bad)":"var(--ac)")+'"></i></div>';
+if(g>0)h+='<div class="mut" style="margin-top:10px">Savings goal: '+money(Math.max(0,m.s))+' of '+money(g)+'</div><div class="bar"><i style="width:'+Math.min(100,Math.max(0,m.s)/g*100)+'%"></i></div>';
+h+='</div>';
+var cats=Object.keys(m.cat).sort(function(a,b){return m.cat[b]-m.cat[a]});
+if(cats.length)h+='<h2>Spending by category</h2>'+cats.map(function(c){return'<div class="mut">'+esc(c)+' · '+money(m.cat[c])+' ('+Math.round(m.cat[c]/m.e*100)+'%)</div><div class="bar" style="margin-bottom:8px"><i style="width:'+m.cat[c]/m.e*100+'%"></i></div>'}).join("");
+h+='<h2>Add a transaction</h2><div class="card"><div class="tabs"><button class="'+(txType=="expense"?"":"s")+'" onclick="setType(\'expense\')">Expense</button><button class="'+(txType=="income"?"":"s")+'" onclick="setType(\'income\')">Income</button></div><input id="xn" placeholder="'+(txType=="income"?"Source, e.g. salary":"What for, e.g. lunch, bus fare")+'"><div class="f"><input id="xa" type="number" step="any" placeholder="Amount"><input id="xd" type="date" value="'+td()+'">';
+if(txType=="expense")h+='<select id="xc" class="w"><option value="">Category: detect automatically</option>'+Object.keys(CATS).concat("Other").map(function(c){return"<option>"+c+"</option>"}).join("")+'</select>';
+h+='<button class="w" onclick="addTx()">Save</button></div></div>';
+h+='<h2>Monthly plan</h2><div class="card"><div class="f" style="margin-top:0"><input id="sb" type="number" placeholder="Spending budget" value="'+(b||"")+'"><input id="sg" type="number" placeholder="Savings goal" value="'+(g||"")+'"><button class="w s" onclick="setBG()">Save plan</button></div></div>';
+var tx=S.tx.slice().sort(function(a,b){return a.date<b.date?1:-1}).slice(0,15);
+if(tx.length)h+='<h2>Recent</h2>'+tx.map(function(x){return'<div class="card row"><div class="g">'+esc(x.note||x.cat)+'<div class="mut">'+nice(x.date)+' · '+esc(x.cat)+'</div></div><b class="sans '+(x.type=="income"?"inc":"exp")+'">'+(x.type=="income"?"+":"-")+money(x.amt)+'</b><button class="x" onclick="del(\'tx\',\''+x.id+'\')">✕</button></div>'}).join("");
+h+='<h2>Backup</h2><div class="row"><button class="s" onclick="exportData()">Export data</button><label class="mut">Restore: <input type="file" accept=".json" onchange="importData(event)"></label></div><p class="mut">Data is stored only on this device. Export a backup now and then.</p>';
+return h}
+
+function render(){var y=window.scrollY,V={today:vToday,cal:vCal,calls:vCalls,money:vMoney};
+document.getElementById("app").innerHTML=V[T]();
+var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance"};
+document.getElementById("nav").innerHTML=Object.keys(N).map(function(k){return'<button class="'+(k==T?"on":"")+'" onclick="go(\''+k+'\')">'+N[k]+'</button>'}).join("");
+window.scrollTo(0,y)}
+setIcons();render();notify();setInterval(function(){notify()},6e4);
+</script>
+</body>
 </html>
