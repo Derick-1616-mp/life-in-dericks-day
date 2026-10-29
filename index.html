@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1f5e4b">
 <title>Life in Derick’s day</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 :root{--bg:#f3f1ec;--card:#fff;--ink:#1d2421;--mut:#6b7570;--line:#dcd8cf;--ac:#1f5e4b;--acs:#dcebe5;--warn:#b4531a;--bad:#a8322d;--good:#1f7a4d;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -106,7 +109,7 @@ function pickContacts(){navigator.contacts.select(["name","tel"],{multiple:true}
 function importVcf(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var out=[],cards=String(r.result).split(/BEGIN:VCARD/i).slice(1);cards.forEach(function(c){var fn=c.match(/^FN[^:]*:(.*)$/im),tl=c.match(/^TEL[^:]*:(.*)$/im);out.push({name:fn?fn[1].trim():"",tel:tl?tl[1].trim():""})});addPool(out)};r.readAsText(f)}
 function vPicks(){var t=td(),p=picks(),h='<h2>People to call today</h2>';if(!S.pool.length)return h+'<div class="card"><p class="mut" style="margin:0 0 8px">Import your contacts and two people will be picked for you each day.</p><button onclick="go(\'calls\')">Import contacts</button></div>';h+=p.map(function(c){return'<div class="card row"><div class="g '+(c.last==t?'done':'')+'"><b class="sans">'+esc(c.name)+'</b></div>'+(c.tel?'<a class="btn" href="tel:'+esc(c.tel)+'">Call</a>':'')+(c.last==t?'':'<button class="s" onclick="poolCalled(\''+c.id+'\')">Done</button>')+'</div>'}).join('');return h+'<button class="s" onclick="reroll()">Pick different people</button>'}
 function vToday(){var t=td(),list=tasksOn(t),dn=list.filter(function(x){return x.done}).length,al=alerts();
-var h='<h1 class="brand">'+LOGO+'<span>Life in Derick’s day</span></h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
+var h='<h1 class="brand"><img src="icon-192.png" alt="" width="46" height="46" style="border-radius:11px;flex:none"><span>Life in Derick’s day</span></h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
 h+=al.length?al.map(function(a){return'<div class="alert '+a[0]+'">'+esc(a[1])+'</div>'}).join(""):'<div class="alert ok">Nothing needs your attention right now.</div>';
 if(window.Notification&&Notification.permission!="granted")h+='<button class="s" onclick="ask()">Turn on daily reminder alerts</button>';
 h+=vPicks();h+='<h2>Today’s plan: '+dn+' of '+list.length+' done</h2><div class="bar"><i style="width:'+(list.length?dn/list.length*100:0)+'%"></i></div>';
@@ -159,7 +162,8 @@ document.getElementById("app").innerHTML=V[T]();
 var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance"};
 document.getElementById("nav").innerHTML=Object.keys(N).map(function(k){return'<button class="'+(k==T?"on":"")+'" onclick="go(\''+k+'\')">'+N[k]+'</button>'}).join("");
 window.scrollTo(0,y)}
-setIcons();render();notify();setInterval(function(){notify()},6e4);
+if("serviceWorker"in navigator&&location.protocol.indexOf("http")==0)navigator.serviceWorker.register("sw.js").catch(function(){});
+render();notify();setInterval(function(){notify()},6e4);
 </script>
 </body>
 </html>
