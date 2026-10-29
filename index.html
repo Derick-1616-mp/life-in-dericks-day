@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link href="index.css" rel="stylesheet" />
+    <title>miniapp</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <script>
+      function formatQuery() {
+        var url = window.location.href;
+        var index = url.lastIndexOf('?');
+        var queryMap = {};
+        if (index > -1) {
+          var queryStr = url.slice(index + 1);
+          var queryList = queryStr.split('&');
+          for (var i = 0; i < queryList.length; i++) {
+            var value = queryList[i];
+            var item = value.split('=');
+            var key = item[0] || '';
+            var val = decodeURIComponent(item[1] || '');
+            queryMap[key] = val;
+          }
+        }
+        return queryMap;
+      }
+      var queryMap = formatQuery();
+      document.documentElement.style.backgroundColor = queryMap.bgColor;
+      if (queryMap._transsion_dlt_miniapp_dark_theme_is_enabled == 1) {
+        var classVal = document.documentElement.getAttribute('class');
+        if (!classVal) {
+          classVal = 'dlt-dark__mode';
+        } else {
+          classVal = classVal.concat(' dlt-dark__mode');
+        }
+        document.documentElement.setAttribute('class', classVal);
+      }
+      (function (global) {
+        global.feRenderPreloadStart = Date.now();
+      })(window);
+    </script>
+  </head>
+  <body>
+    <div id="dlt-skeleton-type-1" class="dlt-skeleton-type-1">
+      <div class="dlt-skeleton-block">
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph short"></div>
+      </div>
+      <div class="dlt-skeleton-block">
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph short"></div>
+      </div>
+      <div class="dlt-skeleton-block">
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph short"></div>
+      </div>
+      <div class="dlt-skeleton-block">
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph short"></div>
+      </div>
+    </div>
+    <div id="dlt-skeleton-type-2" class="dlt-skeleton-type-2">
+      <div class="dlt-skeleton-box">
+        <div class="dlt-skeleton-square"></div>
+      </div>
+      <div class="dlt-skeleton-box">
+        <div class="dlt-skeleton-square short"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph short"></div>
+      </div>
+      <div class="dlt-skeleton-box">
+        <div class="dlt-skeleton-square short"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph"></div>
+        <div class="dlt-skeleton-paragraph short"></div>
+      </div>
+      <div class="dlt-skeleton-box">
+        <div class="dlt-skeleton-square"></div>
+      </div>
+    </div>
+    <script type="text/javascript" src="render.js"></script>
+    <script type="text/javascript">
+      (function (global) {
+        global.feSlavePreloadEnd = Date.now();
+      })(window);
+    </script>
+  </body>
+</html>
