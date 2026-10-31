@@ -45,6 +45,7 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
 .tabs{display:flex;gap:6px;margin:8px 0}.tabs button{flex:1}.brand{display:flex;align-items:center;gap:10px}.brand svg{width:46px;height:46px;flex:none}a.btn{display:inline-block;font:.95rem system-ui,sans-serif;padding:9px 14px;border-radius:8px;background:var(--ac);color:var(--onac,#fff);text-decoration:none}@media (prefers-color-scheme:dark){a.btn{color:var(--onac,#10201a)}}
 .me{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--ac);flex:none}.pv{width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--acs);flex:none}.sw{width:38px;height:38px;border-radius:50%;padding:0;border:3px solid transparent}.sw.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}.wpg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.wpb{height:60px;border-radius:8px;border:3px solid transparent;color:#fff;font-size:.85rem;padding:4px;text-transform:capitalize}.wpb.on{border-color:var(--ink)}input[type=color]{padding:0;height:42px;margin-top:4px}input[type=range]{padding:0;margin-top:4px}label{display:block}
 body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}main{width:100%;flex:1}#cr{text-align:center;color:var(--mut);font:.78rem/1.5 system-ui,sans-serif;padding:18px 16px 6px}#cr img{margin-top:6px;border-radius:50%;background:#fff}
+.top{display:flex;align-items:center;gap:12px;margin:0 0 10px}.top .g{min-width:0}.av{width:50px;height:50px;border-radius:50%;padding:0;overflow:hidden;border:2px solid var(--ac);background:var(--acs);color:var(--ac);font-size:1.5rem;flex:none}.av img{width:100%;height:100%;object-fit:cover;display:block}.nm{font:600 1.05rem system-ui,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -122,14 +123,16 @@ var bg=st.wp=="img"&&st.wpimg?'url("'+st.wpimg+'")':WP[st.wp]||"",d=st.dim==null
 document.body.style.background=bg?"linear-gradient("+ov+","+ov+"),"+bg+" center/cover fixed":"";
 var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=st.accent||"#1f5e4b"}
 function ss(k,v){S.set[k]=v;save();applyStyle()}
+function setName(v){ss("name",v);var e=document.getElementById("tn");if(e)e.textContent=v||"Add your name"}
+function topbar(){var st=S.set,nm=(st.name||"").trim(),ini=nm?esc(nm.charAt(0).toUpperCase()):"+";return'<div class="top"><button class="av" onclick="go(\'set\')" aria-label="Open profile">'+(st.pic?'<img src="'+st.pic+'" alt="">':ini)+'</button><div class="g"><div class="nm" id="tn">'+(nm?esc(nm):"Add your name")+'</div><div class="mut">Do-2-day</div></div></div>'}
 function pickAcc(c){ss("accent",c);render()}
 function setWp(k){ss("wp",k);render()}
 function readImg(f,max,sq,q,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height;if(sq){var m=Math.min(w,h);c.width=c.height=max;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,max,max)}else{var k=Math.min(1,max/Math.max(w,h));c.width=Math.round(w*k);c.height=Math.round(h*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height)}cb(c.toDataURL("image/jpeg",q))};im.src=r.result};r.readAsDataURL(f)}
 function setPic(e){var f=e.target.files[0];if(!f)return;readImg(f,200,true,.85,function(d){ss("pic",d);render()})}
 function setWpImg(e){var f=e.target.files[0];if(!f)return;readImg(f,1000,false,.72,function(d){S.set.wpimg=d;ss("wp","img");render()})}
 function resetStyle(){["accent","nav","wp","wpimg","dim"].forEach(function(k){delete S.set[k]});save();applyStyle();render()}
-function vSet(){var st=S.set,h='<h1>Style</h1><p class="sub">Make the app yours. Choices are saved on this device.</p>';
-h+='<h2>Profile picture</h2><div class="card row">'+(st.pic?'<img class="pv" src="'+st.pic+'" alt="">':'<div class="pv"></div>')+'<div class="g"><input type="file" accept="image/*" onchange="setPic(event)">'+(st.pic?'<button class="x" onclick="ss(\'pic\',\'\');render()">Remove picture</button>':'')+'</div></div>';
+function vSet(){var st=S.set,h='<h1>Profile</h1><p class="sub">Your name and picture show at the top of every page. Choices are saved on this device.</p>';
+h+='<h2>Your name</h2><div class="card"><input id="un" placeholder="Type your name" value="'+esc(st.name||"")+'" oninput="setName(this.value)"></div><h2>Profile picture</h2><div class="card row">'+(st.pic?'<img class="pv" src="'+st.pic+'" alt="">':'<div class="pv"></div>')+'<div class="g"><input type="file" accept="image/*" onchange="setPic(event)">'+(st.pic?'<button class="x" onclick="ss(\'pic\',\'\');render()">Remove picture</button>':'')+'</div></div>';
 h+='<h2>Button and tab color</h2><div class="card"><div class="row" style="flex-wrap:wrap">'+SW.map(function(c){return'<button class="sw'+(st.accent==c?' on':'')+'" style="background:'+c+'" onclick="pickAcc(\''+c+'\')" aria-label="'+c+'"></button>'}).join("")+'</div><div class="f"><label class="mut">Custom color<input type="color" value="'+(st.accent||"#1f5e4b")+'" oninput="ss(\'accent\',this.value)"></label><button class="s" onclick="ss(\'accent\',\'\');render()">Use default</button></div></div>';
 h+='<h2>Tab bar color</h2><div class="card"><div class="f" style="margin-top:0"><label class="mut">Pick a color<input type="color" value="'+(st.nav||"#1b2220")+'" oninput="ss(\'nav\',this.value)"></label><button class="s" onclick="ss(\'nav\',\'\');render()">Use default</button></div></div>';
 h+='<h2>Wallpaper</h2><div class="card"><div class="wpg">'+Object.keys(WP).map(function(k){return'<button class="wpb'+(st.wp==k?' on':'')+'" style="background:'+WP[k]+'" onclick="setWp(\''+k+'\')">'+k+'</button>'}).join("")+'<button class="wpb s" style="border:3px dashed var(--line)" onclick="setWp(\'\')">None</button></div><p class="mut" style="margin:0 0 4px">Use your own photo</p><input type="file" accept="image/*" onchange="setWpImg(event)"><label class="mut" style="margin-top:12px">Dim wallpaper so text stays easy to read<input type="range" min="0" max="85" value="'+(st.dim==null?55:st.dim)+'" oninput="ss(\'dim\',+this.value)"></label></div>';
@@ -147,7 +150,7 @@ function fire(key,title,snd){if(S.played[key])return;S.played[key]=1;save();beep
 S.tasks.forEach(function(x){if(!x.done&&x.snd&&x.date==t&&x.time&&x.time<=hm)fire(x.id,x.title,x.snd)});
 eventsOn(t).forEach(function(e){if(e.snd)fire(e.id,e.title,e.snd)})}
 function vToday(){var t=td(),list=tasksOn(t),dn=list.filter(function(x){return x.done}).length,al=alerts();
-var h='<h1 class="brand"><img src="icon-192.png" alt="" width="46" height="46" style="border-radius:11px;flex:none"><span style="flex:1;min-width:0">Do-2-day</span>'+(S.set.pic?'<img class="me" src="'+S.set.pic+'" alt="">':'')+'</h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
+var h='<h1>Today</h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
 h+=al.length?al.map(function(a){return'<div class="alert '+a[0]+'">'+esc(a[1])+'</div>'}).join(""):'<div class="alert ok">Nothing needs your attention right now.</div>';
 if(window.Notification&&Notification.permission!="granted")h+='<button class="s" onclick="ask()">Turn on daily reminder alerts</button>';
 h+=vPicks();h+='<h2>Today’s plan: '+dn+' of '+list.length+' done</h2><div class="bar"><i style="width:'+(list.length?dn/list.length*100:0)+'%"></i></div>';
@@ -196,8 +199,8 @@ h+='<h2>Backup</h2><div class="row"><button class="s" onclick="exportData()">Exp
 return h}
 
 function render(){var y=window.scrollY,V={today:vToday,cal:vCal,calls:vCalls,money:vMoney,set:vSet};
-document.getElementById("app").innerHTML=V[T]();
-var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance",set:"Style"};
+document.getElementById("app").innerHTML=topbar()+V[T]();
+var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance",set:"Profile"};
 document.getElementById("nav").innerHTML=Object.keys(N).map(function(k){return'<button class="'+(k==T?"on":"")+'" onclick="go(\''+k+'\')">'+N[k]+'</button>'}).join("");
 window.scrollTo(0,y)}
 if("serviceWorker"in navigator&&location.protocol.indexOf("http")==0)navigator.serviceWorker.register("sw.js").catch(function(){});
