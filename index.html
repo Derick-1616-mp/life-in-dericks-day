@@ -137,17 +137,17 @@ function ask(q,sub,yes){MDY=yes;var m=document.getElementById("md");if(!m){m=doc
 function mdN(){document.getElementById("md").style.display="none"}
 function mdY(){mdN();if(MDY)MDY()}
 function saveMe(){ask("Save your changes?","Your profile will be updated.",function(){S.prof=D;save();editMe=false;D=null;render()})}
-function vMeEdit(){var h='<h1>Edit profile</h1><div class="card row">'+(D.pic?'<img class="pv" src="'+D.pic+'" alt="">':'<div class="pv"></div>')+'<div class="g"><input type="file" accept="image/*" onchange="editPic(event)">'+(D.pic?'<button class="x" onclick="D.pic=\'\';render()">Remove picture</button>':'')+'</div></div>';
+function vMeEdit(){var h='<div class="row"><h1 class="g">Edit profile</h1><button class="s" onclick="editMe=false;render()">Cancel</button><button onclick="saveMe()">OK</button></div><div class="card row">'+(D.pic?'<img class="pv" src="'+D.pic+'" alt="">':'<div class="pv"></div>')+'<div class="g"><input type="file" accept="image/*" onchange="editPic(event)">'+(D.pic?'<button class="x" onclick="D.pic=\'\';render()">Remove picture</button>':'')+'</div></div>';
 h+=inp("Name","name","Your name");
 [0,1,2].forEach(function(i){h+='<label class="mut" style="margin-top:10px">Career '+(i+1)+(i?' (optional)':'')+'<input placeholder="e.g. Electrical engineer" value="'+esc(D.careers[i]||"")+'" oninput="D.careers['+i+']=this.value"></label>'});
 h+=inp("Home (where you live)","home","Town or address")+inp("Company or institution you work for","company","Name")+inp("Where it is located","workLoc","City or address")+inp("Phone number","phone","+000 000 000 000","tel")+inp("WhatsApp number","wa","+000 000 000 000","tel")+inp("Instagram account name","ig","username")+inp("TikTok account name","tt","username");
 return h+'<div class="row" style="margin:16px 0"><button class="s g" onclick="editMe=false;render()">Cancel</button><button class="g" onclick="saveMe()">OK</button></div>'}
 function vMe(){if(editMe)return vMeEdit();var P=S.prof,cs=P.careers.filter(function(c){return c&&c.trim()}),h='<h1>My profile</h1>';
-h+='<div class="card" style="text-align:center">'+(P.pic?'<img class="pv" style="width:96px;height:96px;margin:0 auto;display:block" src="'+P.pic+'" alt="">':'<div class="pv" style="width:96px;height:96px;margin:0 auto"></div>')+'<h2 style="margin:10px 0 0;font-size:1.3rem">'+(P.name?esc(P.name):'<span class="mut">No name yet</span>')+'</h2></div>';
+h+='<div class="card row">'+(P.pic?'<img class="pv" src="'+P.pic+'" alt="">':'<div class="pv"></div>')+'<div class="g"><h2 style="margin:0;font-size:1.25rem">'+(P.name?esc(P.name):'<span class="mut">No name yet</span>')+'</h2></div><button onclick="startEdit()">Edit profile</button></div>';
 h+='<div class="card"><div class="mut" style="margin-bottom:4px">Careers</div>'+(cs.length?cs.map(function(c){return'<span class="chip">'+esc(c)+'</span>'}).join(""):'<span class="mut">Not added</span>')+'</div>';
 var ig=clean(P.ig),tt=clean(P.tt),wa=digits(P.wa),ph=String(P.phone||"").replace(/[^\d+]/g,"");
 h+=row("Home",P.home)+row("Works at",P.company)+row("Work location",P.workLoc)+row("Phone",P.phone,ph?"tel:"+ph:"")+row("WhatsApp",P.wa,wa?"https://wa.me/"+wa:"")+row("Instagram",ig?"@"+ig:"",ig?"https://instagram.com/"+encodeURIComponent(ig):"")+row("TikTok",tt?"@"+tt:"",tt?"https://www.tiktok.com/@"+encodeURIComponent(tt):"");
-return h+'<button style="margin:12px 0;width:100%" onclick="startEdit()">Edit profile</button>'}
+return h}
 function pickAcc(c){ss("accent",c);render()}
 function setWp(k){ss("wp",k);render()}
 function readImg(f,max,sq,q,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height;if(sq){var m=Math.min(w,h);c.width=c.height=max;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,max,max)}else{var k=Math.min(1,max/Math.max(w,h));c.width=Math.round(w*k);c.height=Math.round(h*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height)}cb(c.toDataURL("image/jpeg",q))};im.src=r.result};r.readAsDataURL(f)}
