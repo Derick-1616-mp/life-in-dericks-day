@@ -92,7 +92,6 @@ function overlayBack(){var m=document.getElementById("md");
 if(m&&m.style.display=="flex"){m.style.display="none";return true}
 if(document.getElementById("mn")){closeMenu();return true}
 if(T=="me"&&editMe){editMe=false;render();return true}
-if(T=="music"&&mTab=="pls"&&openPl){openPl=null;render();return true}
 return false}
 function go(t){if(t!=T){try{history.pushState({t:t},"")}catch(e){}}T=t;render()}
 function tasksOn(d){return S.tasks.filter(function(x){return x.date==d})}
@@ -183,74 +182,6 @@ function vAbout(){return'<h1>About</h1><div class="card"><h2 style="margin:0 0 4
 +'<h2>What it does</h2><div class="card"><p style="margin:0 0 8px"><b>Today and My day:</b> plan activities, tick them off and see what is done and what is left.</p><p style="margin:0 0 8px"><b>Calendar:</b> keep events such as birthdays and anniversaries, with yearly repeats.</p><p style="margin:0 0 8px"><b>Calls:</b> set how often to call family and friends, and get two people from your contacts each day to call.</p><p style="margin:0 0 8px"><b>Finance:</b> record income and expenses, see spending by category, and set a budget and a savings goal.</p><p style="margin:0 0 8px"><b>Reminders:</b> alerts and sounds for activities and events while the app is open.</p><p style="margin:0"><b>Profile and Style:</b> your personal details, colors and wallpaper.</p></div>'
 +'<h2>Your data</h2><div class="card"><p style="margin:0 0 8px">Everything is stored on this device only. There is no account and nothing is sent to an online server.</p><p style="margin:0">Use Export data in the Finance tab to keep a backup. Clearing your browser data erases the app’s data.</p></div>'
 +'<h2>Copyright</h2><div class="card" style="text-align:center"><p style="margin:0 0 8px">© 2026 Derick Malelo and ElectroCat Company Ltd.<br>All rights reserved.</p><img src="electrocat-logo.png" alt="ElectroCat logo" width="56" height="56" style="border-radius:50%;background:#fff"></div>'}
-var NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()),SCANNING=false,SCANMSG="",SONGS=[],SLOAD=false,mTab="songs",openPl=null,mQ="",AUD=new Audio(),Q=[],qi=-1,CUR=null,CURL="",SHUF=false,REP=0,SEEK=0,DB=null,AEXT=/\.(mp3|m4a|aac|wav|ogg|oga|opus|flac|wma|amr|weba)$/i;
-function dbo(){return new Promise(function(res,rej){if(DB)return res(DB);var r=indexedDB.open("do2day-music",1);r.onupgradeneeded=function(){var d=r.result;d.createObjectStore("meta",{keyPath:"id"});d.createObjectStore("blob")};r.onsuccess=function(){DB=r.result;res(DB)};r.onerror=function(){rej(r.error)}})}
-function dbTx(st,mode,fn){return dbo().then(function(d){return new Promise(function(res,rej){var t=d.transaction(st,mode),out=fn(t);t.oncomplete=function(){res(out&&out.result!==undefined?out.result:out)};t.onerror=function(){rej(t.error)};t.onabort=function(){rej(t.error)}})})}
-function fmt(x){x=Math.floor(x||0);return Math.floor(x/60)+":"+pad(x%60)}
-function toast(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2200)}
-function showMd(h){var m=document.getElementById("md");if(!m){m=document.createElement("div");m.id="md";m.className="md";document.body.appendChild(m)}m.innerHTML=h;m.style.display="flex"}
-function mplug(){return window.Capacitor&&((Capacitor.Plugins&&Capacitor.Plugins.Music)||(Capacitor.registerPlugin&&Capacitor.registerPlugin("Music")))}
-function scanDevice(){SCANNING=true;SCANMSG="Scanning…";if(T=="music")render();var pl=mplug();if(!pl){SCANNING=false;SLOAD=true;SCANMSG="denied";if(T=="music")render();return}
-pl.scan().then(function(r){SONGS=((r&&r.songs)||[]).map(function(x){return{id:"n"+x.id,name:String(x.title||x.name||"Unknown").trim(),artist:x.artist||"",size:x.size||0,path:x.path,dur:x.duration||0}}).sort(function(a,b){return a.name.localeCompare(b.name)});SLOAD=true;SCANNING=false;SCANMSG="";if(T=="music")render()}).catch(function(){SLOAD=true;SCANNING=false;SCANMSG="denied";if(T=="music")render()})}
-function nativeCard(){return'<div class="card">'+(SCANMSG=="denied"?'<p style="margin:0 0 8px">Music access is off. Allow it so Do-2-day can find the songs on your phone.</p><button onclick="scanDevice()">Allow music access</button>':'<div class="row"><div class="g mut">'+(SCANMSG||SONGS.length+" songs found on your phone")+'</div><button class="s" onclick="scanDevice()">Refresh</button></div>')+'</div>'}
-function loadSongs(){if(NATIVE){return}dbTx("meta","readonly",function(t){return t.objectStore("meta").getAll()}).then(function(l){SONGS=(l||[]).sort(function(a,b){return a.name.localeCompare(b.name)});SLOAD=true;if(T=="music")render()}).catch(function(){SLOAD=true;if(T=="music")render()})}
-function isAudio(f){return(f.type||"").indexOf("audio")==0||AEXT.test(f.name)}
-function addFiles(list){var arr=Array.prototype.slice.call(list).filter(isAudio);if(!arr.length){toast("No music files found.");return}
-try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-var n=0,i=0,st=document.getElementById("ms");
-function next(){if(i>=arr.length){loadSongs();toast("Added "+n+" song"+(n==1?"":"s")+".");return}
-var f=arr[i++];if(st)st.textContent="Adding "+i+" of "+arr.length+"…";
-if(SONGS.some(function(x){return x.size==f.size&&x.file==f.name}))return next();
-var m={id:uid(),name:f.name.replace(/\.[^.]+$/,"").replace(/_+/g," "),file:f.name,size:f.size,type:f.type||"audio/mpeg"};
-dbTx(["meta","blob"],"readwrite",function(t){t.objectStore("meta").put(m);t.objectStore("blob").put(f,m.id)}).then(function(){n++;SONGS.push(m);next()}).catch(function(){toast("Not enough storage, or could not save "+f.name);loadSongs()})}
-next()}
-async function scanDir(){try{var d=await window.showDirectoryPicker(),out=[];async function walk(h){for await(var e of h.values()){if(e.kind=="file"){if(AEXT.test(e.name))out.push(await e.getFile())}else await walk(e)}}await walk(d);addFiles(out)}catch(e){}}
-function delSong(id){ask("Remove this song?","It is removed from the app and your playlists. The original file on your phone is not touched.",function(){dbTx(["meta","blob"],"readwrite",function(t){t.objectStore("meta").delete(id);t.objectStore("blob").delete(id)}).then(function(){SONGS=SONGS.filter(function(x){return x.id!=id});S.pls.forEach(function(p){p.ids=p.ids.filter(function(i){return i!=id})});save();if(CUR&&CUR.id==id){AUD.pause();CUR=null;Q=[];upd()}render()})},"Yes, remove")}
-function playId(id,queue){Q=queue&&queue.length?queue.slice():[id];qi=Q.indexOf(id);if(qi<0){Q=[id];qi=0}start()}
-function start(){var id=Q[qi];CUR=SONGS.filter(function(x){return x.id==id})[0];if(!CUR)return;
-if(CUR.path){if(CURL){URL.revokeObjectURL(CURL);CURL=""}AUD.src=Capacitor.convertFileSrc(CUR.path);var pp=AUD.play();if(pp&&pp.catch)pp.catch(function(){});setMedia();upd();return}
-dbTx("blob","readonly",function(t){return t.objectStore("blob").get(id)}).then(function(b){if(!b){toast("Could not open this song.");return}if(CURL)URL.revokeObjectURL(CURL);CURL=URL.createObjectURL(b);AUD.src=CURL;var p=AUD.play();if(p&&p.catch)p.catch(function(){});setMedia();upd()}).catch(function(){toast("Could not open this song.")});upd()}
-function nextSong(auto){if(!Q.length)return;if(REP==2&&auto){AUD.currentTime=0;AUD.play();return}
-if(SHUF&&Q.length>1){var n;do{n=Math.floor(Math.random()*Q.length)}while(n==qi);qi=n}else{qi++;if(qi>=Q.length){if(REP==1||!auto)qi=0;else{AUD.pause();qi=Q.length-1;upd();return}}}start()}
-function prevSong(){if(!Q.length)return;if(AUD.currentTime>3){AUD.currentTime=0;return}qi=qi>0?qi-1:Q.length-1;start()}
-function togglePlay(){if(!CUR)return;if(AUD.paused)AUD.play();else AUD.pause()}
-function setMedia(){if("mediaSession"in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:CUR.name,artist:CUR.artist||"Do-2-day"});var h=navigator.mediaSession.setActionHandler.bind(navigator.mediaSession);h("play",togglePlay);h("pause",togglePlay);h("nexttrack",function(){nextSong(false)});h("previoustrack",prevSong)}catch(e){}}}
-function tick(){var k=document.getElementById("pk"),t=document.getElementById("pt");if(k&&!SEEK){k.max=AUD.duration||0;k.value=AUD.currentTime}if(t)t.textContent=fmt(AUD.currentTime)+" / "+fmt(AUD.duration)}
-["play","pause"].forEach(function(e){AUD.addEventListener(e,upd)});AUD.addEventListener("ended",function(){nextSong(true)});AUD.addEventListener("timeupdate",tick);AUD.addEventListener("loadedmetadata",tick);AUD.addEventListener("error",function(){if(CUR)toast("This file can’t be played on this device.")});
-function nowHtml(){if(!CUR)return'<p class="mut" style="margin:0">Nothing is playing. Tap a song to play it.</p>';
-return'<div class="mut">Now playing</div><div style="margin:2px 0 8px"><b class="sans">'+esc(CUR.name)+'</b></div><input id="pk" type="range" min="0" max="'+(AUD.duration||0)+'" step="1" value="'+AUD.currentTime+'" oninput="SEEK=1;AUD.currentTime=this.value" onchange="SEEK=0"><div class="mut" id="pt">'+fmt(AUD.currentTime)+' / '+fmt(AUD.duration)+'</div><div class="row" style="justify-content:space-between;margin-top:8px"><button class="'+(SHUF?"":"s")+'" onclick="SHUF=!SHUF;upd()">Shuffle</button><button class="s" onclick="prevSong()" aria-label="Previous">⏮</button><button onclick="togglePlay()" aria-label="Play or pause">'+(AUD.paused?"▶":"⏸")+'</button><button class="s" onclick="nextSong(false)" aria-label="Next">⏭</button><button class="'+(REP?"":"s")+'" onclick="REP=(REP+1)%3;upd()">Repeat'+(REP==2?" 1":REP==1?" all":"")+'</button></div>'}
-function renderMini(){var e=document.getElementById("mp");if(!CUR||T=="music"){if(e)e.style.display="none";document.body.classList.remove("hasmp");return}
-if(!e){e=document.createElement("div");e.id="mp";e.className="mp";document.body.appendChild(e)}
-e.style.display="flex";e.style.bottom=document.getElementById("nav").offsetHeight+"px";
-e.innerHTML='<div class="g" onclick="go(\'music\')"><b class="sans">'+esc(CUR.name)+'</b></div><button class="x" onclick="prevSong()" aria-label="Previous">⏮</button><button class="x" onclick="togglePlay()" aria-label="Play or pause">'+(AUD.paused?"▶":"⏸")+'</button><button class="x" onclick="nextSong(false)" aria-label="Next">⏭</button>';document.body.classList.add("hasmp")}
-function upd(){renderMini();var e=document.getElementById("np");if(e)e.innerHTML=nowHtml()}
-function filtered(){var q=mQ.toLowerCase();return SONGS.filter(function(x){return x.name.toLowerCase().indexOf(q)>-1})}
-function playFrom(id){playId(id,filtered().map(function(x){return x.id}))}
-function songList(){var l=filtered();return l.length?l.map(function(x){return'<div class="card row"><div class="g" style="cursor:pointer'+(CUR&&CUR.id==x.id?";color:var(--ac)":"")+'" onclick="playFrom(\''+x.id+'\')"><b class="sans">'+esc(x.name)+'</b><div class="mut">'+(x.artist?esc(x.artist)+" · ":"")+(x.size/1048576).toFixed(1)+' MB</div></div><button class="x" onclick="plPicker(\''+x.id+'\')" aria-label="Add to playlist">＋</button>'+(x.path?"":'<button class="x" onclick="delSong(\''+x.id+'\')" aria-label="Remove">✕</button>')+'</div>'}).join(""):'<p class="mut">'+(SONGS.length?"No match.":"No music yet. Tap Add music files.")+'</p>'}
-function plOf(id){return S.pls.filter(function(p){return p.id==id})[0]}
-function plSongs(p){return p.ids.map(function(i){return SONGS.filter(function(x){return x.id==i})[0]}).filter(Boolean)}
-function newPl(){var n=v("pn");if(!n)return;S.pls.push({id:uid(),name:n,ids:[]});save();render()}
-function delPl(id){ask("Delete this playlist?","The songs themselves stay in your library.",function(){S.pls=S.pls.filter(function(p){return p.id!=id});if(openPl==id)openPl=null;save();render()},"Yes, delete")}
-function playPl(pid,sid){var l=plSongs(plOf(pid)).map(function(x){return x.id});if(!l.length)return;playId(sid||l[0],l)}
-function rmFromPl(pid,sid){var p=plOf(pid);p.ids=p.ids.filter(function(i){return i!=sid});save();render()}
-function addToPl(pid,sid){var p=plOf(pid);if(p.ids.indexOf(sid)<0)p.ids.push(sid);save();mdN();toast("Added to "+p.name)}
-function createAdd(sid){var n=v("pn2");if(!n)return;S.pls.push({id:uid(),name:n,ids:[sid]});save();mdN();toast("Added to "+n)}
-var PSEL=[],PID=null;
-function pickList(q){q=(q||"").toLowerCase();var e=document.getElementById("pk2");if(!e)return;e.innerHTML=SONGS.filter(function(x){return x.name.toLowerCase().indexOf(q)>-1}).map(function(x){return'<label class="row" style="padding:8px 0;border-top:1px solid var(--line)"><input type="checkbox" '+(PSEL.indexOf(x.id)>-1?"checked ":"")+'onchange="togSel(\''+x.id+'\',this.checked)"><span class="g">'+esc(x.name)+'</span></label>'}).join("")||'<p class="mut">No match.</p>'}
-function togSel(id,on){var i=PSEL.indexOf(id);if(on&&i<0)PSEL.push(id);if(!on&&i>-1)PSEL.splice(i,1)}
-function addSongsUI(pid){if(!SONGS.length){showMd('<div class="mb"><p>Your library is empty. Add music in the Songs tab first.</p><button style="width:100%" onclick="mdN()">OK</button></div>');return}PID=pid;PSEL=plOf(pid).ids.slice();showMd('<div class="mb"><h2 style="margin:0 0 8px">Choose songs</h2><input placeholder="Search songs" oninput="pickList(this.value)"><div id="pk2" style="max-height:45vh;overflow:auto;margin:8px 0"></div><div class="row"><button class="s g" onclick="mdN()">Cancel</button><button class="g" onclick="savePick()">Done</button></div></div>');pickList("")}
-function savePick(){var p=plOf(PID),keep=p.ids.filter(function(i){return PSEL.indexOf(i)>-1});PSEL.forEach(function(i){if(keep.indexOf(i)<0)keep.push(i)});p.ids=keep;save();mdN();render();toast("Playlist updated")}
-function plPicker(sid){showMd('<div class="mb"><h2 style="margin:0 0 10px">Add to playlist</h2>'+S.pls.map(function(p){return'<button class="s" style="width:100%;margin-bottom:6px" onclick="addToPl(\''+p.id+'\',\''+sid+'\')">'+esc(p.name)+' ('+p.ids.length+')</button>'}).join("")+'<input id="pn2" placeholder="New playlist name" style="margin:6px 0"><button style="width:100%" onclick="createAdd(\''+sid+'\')">Create and add</button><button class="x" style="width:100%" onclick="mdN()">Cancel</button></div>')}
-function vMusic(){if(NATIVE&&!SLOAD){if(!SCANNING){SCANNING=true;setTimeout(scanDevice,50)}return'<h1>Music</h1><p class="mut">Looking for music on your phone…</p>'}if(!SLOAD)return'<h1>Music</h1><p class="mut">Loading your music…</p>';
-var h='<h1>Music</h1><div class="tabs"><button class="'+(mTab=="songs"?"":"s")+'" onclick="mTab=\'songs\';openPl=null;render()">Songs</button><button class="'+(mTab=="pls"?"":"s")+'" onclick="mTab=\'pls\';render()">Playlists</button></div><div class="card" id="np">'+nowHtml()+'</div>';
-if(mTab=="songs"){h+=NATIVE?nativeCard():'<div class="card"><input id="mf" type="file" accept="audio/*" multiple style="display:none" onchange="addFiles(this.files)"><div class="row" style="flex-wrap:wrap"><button onclick="document.getElementById(\'mf\').click()">Add music files</button>'+(window.showDirectoryPicker?'<button class="s" onclick="scanDir()">Scan a folder</button>':'')+'</div><p class="mut" id="ms" style="margin:8px 0 0">A web app can’t scan your phone by itself. Tap Add music files, open your Music folder, long-press one song and tap Select all to add everything at once. Songs are copied into the app so they stay here.</p></div>';
-h+='<input placeholder="Search songs" value="'+esc(mQ)+'" oninput="mQ=this.value;document.getElementById(\'sl\').innerHTML=songList()"><div id="sl" style="margin-top:8px">'+songList()+'</div>';return h}
-var p=openPl?plOf(openPl):null;
-if(p){var l=plSongs(p);h+='<div class="row"><button class="s" onclick="openPl=null;render()">‹ Back</button><h2 class="g" style="margin:0">'+esc(p.name)+'</h2><button onclick="playPl(\''+p.id+'\')">Play all</button></div><div style="margin:8px 0"><button class="s" style="width:100%" onclick="addSongsUI(\''+p.id+'\')">Add songs to this playlist</button></div>';
-h+=l.length?l.map(function(x){return'<div class="card row"><div class="g" style="cursor:pointer'+(CUR&&CUR.id==x.id?";color:var(--ac)":"")+'" onclick="playPl(\''+p.id+'\',\''+x.id+'\')"><b class="sans">'+esc(x.name)+'</b></div><button class="x" onclick="rmFromPl(\''+p.id+'\',\''+x.id+'\')" aria-label="Remove from playlist">✕</button></div>'}).join(""):'<p class="mut">This playlist is empty. In Songs, tap ＋ next to a song to add it here.</p>';return h}
-h+='<div class="card"><input id="pn" placeholder="New playlist name"><button style="margin-top:8px;width:100%" onclick="newPl()">Create playlist</button></div>';
-h+=S.pls.length?S.pls.map(function(q){return'<div class="card row"><div class="g" style="cursor:pointer" onclick="openPl=\''+q.id+'\';render()"><b class="sans">'+esc(q.name)+'</b><div class="mut">'+plSongs(q).length+' songs</div></div><button class="s" onclick="playPl(\''+q.id+'\')">Play</button><button class="x" onclick="delPl(\''+q.id+'\')" aria-label="Delete playlist">✕</button></div>'}).join(""):'<p class="mut">No playlists yet. Create one above.</p>';
-return h}
 function pickAcc(c){ss("accent",c);render()}
 function setWp(k){ss("wp",k);render()}
 function readImg(f,max,sq,q,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height;if(sq){var m=Math.min(w,h);c.width=c.height=max;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,max,max)}else{var k=Math.min(1,max/Math.max(w,h));c.width=Math.round(w*k);c.height=Math.round(h*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height)}cb(c.toDataURL("image/jpeg",q))};im.src=r.result};r.readAsDataURL(f)}
@@ -323,15 +254,15 @@ if(tx.length)h+='<h2>Recent</h2>'+tx.map(function(x){return'<div class="card row
 h+='<h2>Backup</h2><div class="row"><button class="s" onclick="exportData()">Export data</button><label class="mut">Restore: <input type="file" accept=".json" onchange="importData(event)"></label></div><p class="mut">Data is stored only on this device. Export a backup now and then.</p>';
 return h}
 
-function render(){var y=window.scrollY,V={today:vToday,cal:vCal,calls:vCalls,money:vMoney,set:vSet,me:vMe,day:vDay,fin:vFin,about:vAbout,music:vMusic};
+function render(){var y=window.scrollY,V={today:vToday,cal:vCal,calls:vCalls,money:vMoney,set:vSet,me:vMe,day:vDay,fin:vFin,about:vAbout};
 document.getElementById("app").innerHTML=topbar(T=="me")+V[T]();
-var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance",music:"Music"};
+var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance",set:"Style"};
 document.getElementById("nav").innerHTML=Object.keys(N).map(function(k){return'<button class="'+(k==T?"on":"")+'" onclick="go(\''+k+'\')">'+N[k]+'</button>'}).join("");
-window.scrollTo(0,y);renderMini()}
-if("serviceWorker"in navigator&&!NATIVE&&location.protocol.indexOf("http")==0)navigator.serviceWorker.register("sw.js").catch(function(){});
+window.scrollTo(0,y)}
+if("serviceWorker"in navigator&&location.protocol.indexOf("http")==0)navigator.serviceWorker.register("sw.js").catch(function(){});
 try{history.replaceState({t:T},"")}catch(e){}
 window.addEventListener("popstate",function(e){if(overlayBack()){try{history.pushState({t:T},"")}catch(x){}return}T=(e.state&&e.state.t)||"today";render()});
-applyStyle();render();loadSongs();notify();chime();setInterval(function(){notify();chime()},3e4);
+applyStyle();render();notify();chime();setInterval(function(){notify();chime()},3e4);
 </script>
 </body>
 </html>
