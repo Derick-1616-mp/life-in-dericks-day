@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1f5e4b">
-<title>Life in Derick’s day</title>
+<title>Do-2-day</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -44,17 +44,19 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
 .inc{color:var(--good)}.exp{color:var(--bad)}
 .tabs{display:flex;gap:6px;margin:8px 0}.tabs button{flex:1}.brand{display:flex;align-items:center;gap:10px}.brand svg{width:46px;height:46px;flex:none}a.btn{display:inline-block;font:.95rem system-ui,sans-serif;padding:9px 14px;border-radius:8px;background:var(--ac);color:var(--onac,#fff);text-decoration:none}@media (prefers-color-scheme:dark){a.btn{color:var(--onac,#10201a)}}
 .me{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--ac);flex:none}.pv{width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--acs);flex:none}.sw{width:38px;height:38px;border-radius:50%;padding:0;border:3px solid transparent}.sw.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}.wpg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.wpb{height:60px;border-radius:8px;border:3px solid transparent;color:#fff;font-size:.85rem;padding:4px;text-transform:capitalize}.wpb.on{border-color:var(--ink)}input[type=color]{padding:0;height:42px;margin-top:4px}input[type=range]{padding:0;margin-top:4px}label{display:block}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}main{width:100%;flex:1}#cr{text-align:center;color:var(--mut);font:.78rem/1.5 system-ui,sans-serif;padding:18px 16px 6px}#cr img{margin-top:6px;border-radius:50%;background:#fff}
 </style>
 </head>
 <body>
 <main id="app"></main>
+<footer id="cr">© Derick Malelo and ElectroCat Company Ltd<br><img src="electrocat-logo.png" alt="ElectroCat logo" width="44" height="44"></footer>
 <nav id="nav"></nav>
 <script>
 var K="lifeplanner.v1",T="today",sel=td(),cm=td().slice(0,7),txType="expense";
 function def(){return{tasks:[],events:[],contacts:[],tx:[],set:{budget:0,goal:0},notified:""}}
 var S=(function(){try{var d=JSON.parse(localStorage.getItem(K));return d&&d.tasks?d:def()}catch(e){return def()}})();
 function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
-var LOGO="<svg viewBox='0 0 120 120' role='img' aria-label='Life in Derick’s day logo'><defs><linearGradient id='lg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#4b2fb8'/><stop offset='1' stop-color='#0e9f94'/></linearGradient></defs><rect width='120' height='120' rx='27' fill='url(#lg)'/><circle cx='60' cy='60' r='46' fill='#fff' fill-opacity='.14' stroke='#fff' stroke-opacity='.55' stroke-width='3'/><path d='M60 17v7M60 96v7M17 60h7M96 60h7' stroke='#fff' stroke-opacity='.7' stroke-width='3' stroke-linecap='round'/><path d='M60 60L44 44M60 60L82 40' stroke='#fff' stroke-opacity='.85' stroke-width='4' stroke-linecap='round'/><rect x='20' y='88' width='21' height='16' rx='2' fill='#ff7a59'/><rect x='41' y='74' width='21' height='30' fill='#ffc233'/><rect x='62' y='60' width='21' height='44' fill='#37c97f'/><rect x='83' y='46' width='21' height='58' rx='2' fill='#ff5fa2'/><path d='M40 60Q62 34 86 33' stroke='#ffe066' stroke-width='1.8' stroke-dasharray='1 4' stroke-linecap='round' fill='none'/><polygon points='94,25 96,30.25 101.6,30.5 97.2,34 98.7,39.5 94,36.4 89.3,39.5 90.8,34 86.4,30.5 92,30.25' fill='#ffe066'/><ellipse cx='27' cy='87' rx='3.2' ry='2' fill='#ffd9b8'/><ellipse cx='34' cy='87' rx='3.2' ry='2' fill='#ffd9b8'/><ellipse cx='30.5' cy='80' rx='6.5' ry='7' fill='#fff'/><path d='M35 78l6-9M26 79l-2 4' stroke='#ffd9b8' stroke-width='3' stroke-linecap='round'/><circle cx='30.5' cy='67' r='7.5' fill='#ffd9b8'/><path d='M29 60c1-3 4-3 5 0' stroke='#6b3f1d' stroke-width='1.6' fill='none' stroke-linecap='round'/><circle cx='28' cy='66' r='1.9' fill='#fff'/><circle cx='33' cy='66' r='1.9' fill='#fff'/><circle cx='28.7' cy='65.3' r='1' fill='#222'/><circle cx='33.7' cy='65.3' r='1' fill='#222'/><path d='M28.5 70q2 1.6 4 0' stroke='#b5533c' stroke-width='1.2' fill='none' stroke-linecap='round'/></svg>";
+var LOGO="<svg viewBox='0 0 120 120' role='img' aria-label='Do-2-day logo'><defs><linearGradient id='lg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#4b2fb8'/><stop offset='1' stop-color='#0e9f94'/></linearGradient></defs><rect width='120' height='120' rx='27' fill='url(#lg)'/><circle cx='60' cy='60' r='46' fill='#fff' fill-opacity='.14' stroke='#fff' stroke-opacity='.55' stroke-width='3'/><path d='M60 17v7M60 96v7M17 60h7M96 60h7' stroke='#fff' stroke-opacity='.7' stroke-width='3' stroke-linecap='round'/><path d='M60 60L44 44M60 60L82 40' stroke='#fff' stroke-opacity='.85' stroke-width='4' stroke-linecap='round'/><rect x='20' y='88' width='21' height='16' rx='2' fill='#ff7a59'/><rect x='41' y='74' width='21' height='30' fill='#ffc233'/><rect x='62' y='60' width='21' height='44' fill='#37c97f'/><rect x='83' y='46' width='21' height='58' rx='2' fill='#ff5fa2'/><path d='M40 60Q62 34 86 33' stroke='#ffe066' stroke-width='1.8' stroke-dasharray='1 4' stroke-linecap='round' fill='none'/><polygon points='94,25 96,30.25 101.6,30.5 97.2,34 98.7,39.5 94,36.4 89.3,39.5 90.8,34 86.4,30.5 92,30.25' fill='#ffe066'/><ellipse cx='27' cy='87' rx='3.2' ry='2' fill='#ffd9b8'/><ellipse cx='34' cy='87' rx='3.2' ry='2' fill='#ffd9b8'/><ellipse cx='30.5' cy='80' rx='6.5' ry='7' fill='#fff'/><path d='M35 78l6-9M26 79l-2 4' stroke='#ffd9b8' stroke-width='3' stroke-linecap='round'/><circle cx='30.5' cy='67' r='7.5' fill='#ffd9b8'/><path d='M29 60c1-3 4-3 5 0' stroke='#6b3f1d' stroke-width='1.6' fill='none' stroke-linecap='round'/><circle cx='28' cy='66' r='1.9' fill='#fff'/><circle cx='33' cy='66' r='1.9' fill='#fff'/><circle cx='28.7' cy='65.3' r='1' fill='#222'/><circle cx='33.7' cy='65.3' r='1' fill='#222'/><path d='M28.5 70q2 1.6 4 0' stroke='#b5533c' stroke-width='1.2' fill='none' stroke-linecap='round'/></svg>";
 function setIcons(){try{var u="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(LOGO.replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" '));var l=document.createElement("link");l.rel="icon";l.href=u;document.head.appendChild(l);var im=new Image();im.onload=function(){try{var c=document.createElement("canvas");c.width=c.height=180;c.getContext("2d").drawImage(im,0,0,180,180);var a=document.createElement("link");a.rel="apple-touch-icon";a.href=c.toDataURL("image/png");document.head.appendChild(a)}catch(e){}};im.src=u}catch(e){}}
 function fix(){S.pool=S.pool||[];S.daily=S.daily||{date:"",ids:[]}}fix();function pad(n){return(n<10?"0":"")+n}
 function iso(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
@@ -80,7 +82,7 @@ S.contacts.forEach(function(c){if(callDue(c)<=t)a.push(["",(diff(callDue(c),t)>0
 picks().forEach(function(p){if(p.last!=t&&!S.contacts.some(function(c){return c.name==p.name&&callDue(c)<=t}))a.push(["","Call today: "+p.name])});var b=S.set.budget;if(b>0){if(m.e>b)a.push(["bad","Over budget by "+money(m.e-b)+" this month"]);else if(m.e>=b*.8)a.push(["","You have used "+Math.round(m.e/b*100)+"% of this month’s budget"])}
 if(S.set.goal>0&&m.s<S.set.goal&&new Date().getDate()>=20)a.push(["","Savings "+money(m.s)+" of "+money(S.set.goal)+" goal, month is nearly over"]);
 return a}
-function notify(){if(!("Notification"in window)||Notification.permission!="granted"||S.notified==td())return;var a=alerts();if(!a.length)return;S.notified=td();save();try{new Notification("Life in Derick’s day",{body:a.slice(0,4).map(function(x){return x[1]}).join("\n")})}catch(e){}}
+function notify(){if(!("Notification"in window)||Notification.permission!="granted"||S.notified==td())return;var a=alerts();if(!a.length)return;S.notified=td();save();try{new Notification("Do-2-day",{body:a.slice(0,4).map(function(x){return x[1]}).join("\n")})}catch(e){}}
 function ask(){if(!("Notification"in window))return alert("This browser does not support notifications.");Notification.requestPermission().then(function(){notify();render()})}
 function go(t){T=t;render()}
 function tasksOn(d){return S.tasks.filter(function(x){return x.date==d})}
@@ -95,7 +97,7 @@ function called(id){S.contacts.forEach(function(c){if(c.id==id)c.last=td()});sav
 function addTx(){var a=parseFloat(v("xa")),n=v("xn");if(!a||a<=0)return;var c=txType=="income"?"Income":(v("xc")||guess(n));S.tx.push({id:uid(),type:txType,amt:a,note:n,cat:c,date:v("xd")||td()});save();render()}
 function setBG(){S.set.budget=parseFloat(v("sb"))||0;S.set.goal=parseFloat(v("sg"))||0;save();render()}
 function setType(t){txType=t;render()}
-function exportData(){var b=new Blob([JSON.stringify(S)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="life-in-dericks-day-backup.json";a.click()}
+function exportData(){var b=new Blob([JSON.stringify(S)],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="do-2-day-backup.json";a.click()}
 function importData(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.tasks){S=d;fix();save();render()}else alert("Not a Life Planner backup.")}catch(x){alert("Could not read that file.")}};r.readAsText(f)}
 function pickDay(d){sel=d;render()}
 function shift(n){var p=cm.split("-");var d=new Date(+p[0],+p[1]-1+n,1);cm=d.getFullYear()+"-"+pad(d.getMonth()+1);render()}
@@ -145,7 +147,7 @@ function fire(key,title,snd){if(S.played[key])return;S.played[key]=1;save();beep
 S.tasks.forEach(function(x){if(!x.done&&x.snd&&x.date==t&&x.time&&x.time<=hm)fire(x.id,x.title,x.snd)});
 eventsOn(t).forEach(function(e){if(e.snd)fire(e.id,e.title,e.snd)})}
 function vToday(){var t=td(),list=tasksOn(t),dn=list.filter(function(x){return x.done}).length,al=alerts();
-var h='<h1 class="brand"><img src="icon-192.png" alt="" width="46" height="46" style="border-radius:11px;flex:none"><span style="flex:1;min-width:0">Life in Derick’s day</span>'+(S.set.pic?'<img class="me" src="'+S.set.pic+'" alt="">':'')+'</h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
+var h='<h1 class="brand"><img src="icon-192.png" alt="" width="46" height="46" style="border-radius:11px;flex:none"><span style="flex:1;min-width:0">Do-2-day</span>'+(S.set.pic?'<img class="me" src="'+S.set.pic+'" alt="">':'')+'</h1><p class="sub">'+new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long",year:"numeric"})+'</p>';
 h+=al.length?al.map(function(a){return'<div class="alert '+a[0]+'">'+esc(a[1])+'</div>'}).join(""):'<div class="alert ok">Nothing needs your attention right now.</div>';
 if(window.Notification&&Notification.permission!="granted")h+='<button class="s" onclick="ask()">Turn on daily reminder alerts</button>';
 h+=vPicks();h+='<h2>Today’s plan: '+dn+' of '+list.length+' done</h2><div class="bar"><i style="width:'+(list.length?dn/list.length*100:0)+'%"></i></div>';

@@ -1,6 +1,6 @@
 {
-  "name": "Life in Derick’s day",
-  "short_name": "Derick’s day",
+  "name": "Do-2-day",
+  "short_name": "Do-2-day",
   "description": "Daily plans, events, calls and finances in one place.",
   "start_url": "./",
   "scope": "./",
