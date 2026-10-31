@@ -88,7 +88,13 @@ if(S.set.goal>0&&m.s<S.set.goal&&new Date().getDate()>=20)a.push(["","Savings "+
 return a}
 function notify(){if(!("Notification"in window)||Notification.permission!="granted"||S.notified==td())return;var a=alerts();if(!a.length)return;S.notified=td();save();try{new Notification("Do-2-day",{body:a.slice(0,4).map(function(x){return x[1]}).join("\n")})}catch(e){}}
 function ask(){if(!("Notification"in window))return alert("This browser does not support notifications.");Notification.requestPermission().then(function(){notify();render()})}
-function go(t){T=t;render()}
+function overlayBack(){var m=document.getElementById("md");
+if(m&&m.style.display=="flex"){m.style.display="none";return true}
+if(document.getElementById("mn")){closeMenu();return true}
+if(T=="me"&&editMe){editMe=false;render();return true}
+if(T=="music"&&mTab=="pls"&&openPl){openPl=null;render();return true}
+return false}
+function go(t){if(t!=T){try{history.pushState({t:t},"")}catch(e){}}T=t;render()}
 function tasksOn(d){return S.tasks.filter(function(x){return x.date==d})}
 function eventsOn(d){return S.events.filter(function(e){return e.yearly?e.date.slice(5)==d.slice(5):e.date==d})}
 function taskRow(x){return'<div class="card row"><input type="checkbox" '+(x.done?"checked":"")+' onchange="tog(\''+x.id+'\')"><div class="g '+(x.done?"done":"")+'">'+esc(x.title)+'<div class="mut">'+nice(x.date)+(x.time?" · "+x.time:"")+(x.snd?" · 🔔 "+x.snd:"")+'</div></div><button class="x" onclick="del(\'tasks\',\''+x.id+'\')">✕</button></div>'}
@@ -323,6 +329,8 @@ var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance",music:"Music"}
 document.getElementById("nav").innerHTML=Object.keys(N).map(function(k){return'<button class="'+(k==T?"on":"")+'" onclick="go(\''+k+'\')">'+N[k]+'</button>'}).join("");
 window.scrollTo(0,y);renderMini()}
 if("serviceWorker"in navigator&&!NATIVE&&location.protocol.indexOf("http")==0)navigator.serviceWorker.register("sw.js").catch(function(){});
+try{history.replaceState({t:T},"")}catch(e){}
+window.addEventListener("popstate",function(e){if(overlayBack()){try{history.pushState({t:T},"")}catch(x){}return}T=(e.state&&e.state.t)||"today";render()});
 applyStyle();render();loadSongs();notify();chime();setInterval(function(){notify();chime()},3e4);
 </script>
 </body>
