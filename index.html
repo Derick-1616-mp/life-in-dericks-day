@@ -45,8 +45,9 @@ input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac)}
 .tabs{display:flex;gap:6px;margin:8px 0}.tabs button{flex:1}.brand{display:flex;align-items:center;gap:10px}.brand svg{width:46px;height:46px;flex:none}a.btn{display:inline-block;font:.95rem system-ui,sans-serif;padding:9px 14px;border-radius:8px;background:var(--ac);color:var(--onac,#fff);text-decoration:none}@media (prefers-color-scheme:dark){a.btn{color:var(--onac,#10201a)}}
 .me{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--ac);flex:none}.pv{width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--acs);flex:none}.sw{width:38px;height:38px;border-radius:50%;padding:0;border:3px solid transparent}.sw.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}.wpg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.wpb{height:60px;border-radius:8px;border:3px solid transparent;color:#fff;font-size:.85rem;padding:4px;text-transform:capitalize}.wpb.on{border-color:var(--ink)}input[type=color]{padding:0;height:42px;margin-top:4px}input[type=range]{padding:0;margin-top:4px}label{display:block}
 body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}main{width:100%;flex:1}#cr{text-align:center;color:var(--mut);font:.78rem/1.5 system-ui,sans-serif;padding:18px 16px 6px}#cr img{margin-top:6px;border-radius:50%;background:#fff}
-.top{display:flex;align-items:center;gap:12px;margin:0 0 10px}.top .g{min-width:0}.av{width:50px;height:50px;border-radius:50%;padding:0;overflow:hidden;border:2px solid var(--ac);background:var(--acs);color:var(--ac);font-size:1.5rem;flex:none}.av img{width:100%;height:100%;object-fit:cover;display:block}.nm{font:600 1.05rem system-ui,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top{display:flex;align-items:center;gap:12px;margin:0 0 10px}.top .g{min-width:0;flex:1}.av{width:50px;height:50px;border-radius:50%;padding:0;overflow:hidden;border:2px solid var(--ac);background:var(--acs);color:var(--ac);font-size:1.5rem;flex:none}.av img{width:100%;height:100%;object-fit:cover;display:block}.nm{font:600 1.05rem system-ui,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chip{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--acs);color:var(--ink);font:.9rem system-ui,sans-serif;margin:2px 6px 2px 0}.md{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:20px;z-index:50}.mb{background:var(--card);border-radius:12px;padding:18px;max-width:340px;width:100%}.mb p{margin:0 0 14px}.mb .row{justify-content:flex-end}
+.mbtn{width:44px;height:44px;border-radius:10px;padding:0;background:transparent;border:1px solid var(--line);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}.mo{position:fixed;inset:0;z-index:39}.mn{position:fixed;z-index:40;min-width:190px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.3);padding:6px}.mn button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);padding:12px 14px;border-radius:8px;font-size:1rem}.mn button:active{background:var(--acs)}
 </style>
 </head>
 <body>
@@ -125,7 +126,7 @@ document.body.style.background=bg?"linear-gradient("+ov+","+ov+"),"+bg+" center/
 var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=st.accent||"#1f5e4b"}
 function ss(k,v){S.set[k]=v;save();applyStyle()}
 function setName(v){ss("name",v);var e=document.getElementById("tn");if(e)e.textContent=v||"Add your name"}
-function topbar(){var st=S.prof,nm=(st.name||"").trim(),ini=nm?esc(nm.charAt(0).toUpperCase()):"+";return'<div class="top"><button class="av" onclick="editMe=false;go(\'me\')" aria-label="Open profile">'+(st.pic?'<img src="'+st.pic+'" alt="">':ini)+'</button><div class="g"><div class="nm" id="tn">'+(nm?esc(nm):"Add your name")+'</div><div class="mut">Do-2-day</div></div></div>'}
+function topbar(c){var st=S.prof,nm=(st.name||"").trim(),ini=nm?esc(nm.charAt(0).toUpperCase()):"+";return'<div class="top">'+(c?'<div class="g"></div>':'<button class="av" onclick="editMe=false;go(\'me\')" aria-label="Open profile">'+(st.pic?'<img src="'+st.pic+'" alt="">':ini)+'</button><div class="g"><div class="nm" id="tn">'+(nm?esc(nm):"Add your name")+'</div><div class="mut">Do-2-day</div></div>')+'<button class="mbtn" id="mb" onclick="toggleMenu()" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>'}
 var editMe=false,D=null,MDY=null;
 function digits(x){return String(x||"").replace(/\D/g,"")}
 function clean(x){return String(x||"").trim().replace(/^@/,"")}
@@ -148,6 +149,33 @@ h+='<div class="card"><div class="mut" style="margin-bottom:4px">Careers</div>'+
 var ig=clean(P.ig),tt=clean(P.tt),wa=digits(P.wa),ph=String(P.phone||"").replace(/[^\d+]/g,"");
 h+=row("Home",P.home)+row("Works at",P.company)+row("Work location",P.workLoc)+row("Phone",P.phone,ph?"tel:"+ph:"")+row("WhatsApp",P.wa,wa?"https://wa.me/"+wa:"")+row("Instagram",ig?"@"+ig:"",ig?"https://instagram.com/"+encodeURIComponent(ig):"")+row("TikTok",tt?"@"+tt:"",tt?"https://www.tiktok.com/@"+encodeURIComponent(tt):"");
 return h}
+var MENU=[["day","My day"],["fin","Finances"],["me","Profile"],["set","Style"],["about","About"]],dayD=td(),finP="month";
+function closeMenu(){["mn","mo"].forEach(function(i){var e=document.getElementById(i);if(e)e.remove()})}
+function toggleMenu(){if(document.getElementById("mn"))return closeMenu();var b=document.getElementById("mb").getBoundingClientRect(),o=document.createElement("div"),m=document.createElement("div");o.id="mo";o.className="mo";o.onclick=closeMenu;m.id="mn";m.className="mn";m.style.top=(b.bottom+6)+"px";m.style.right=Math.max(8,document.documentElement.clientWidth-b.right)+"px";m.innerHTML=MENU.map(function(x){return'<button onclick="menuGo(\''+x[0]+'\')">'+x[1]+'</button>'}).join("");document.body.appendChild(o);document.body.appendChild(m)}
+function menuGo(t){closeMenu();editMe=false;if(t=="day")dayD=td();go(t)}
+function shiftDay(n){dayD=add(dayD,n);render()}
+function vDay(){var t=td(),tk=tasksOn(dayD).sort(function(a,b){return(a.time||"99")<(b.time||"99")?-1:1}),ev=eventsOn(dayD),dn=tk.filter(function(x){return x.done}).length;
+var h='<h1>My day</h1><div class="row sans"><button class="s" onclick="shiftDay(-1)">‹</button><div class="g" style="text-align:center"><b>'+(dayD==t?"Today, ":"")+nice(dayD)+'</b></div><button class="s" onclick="shiftDay(1)">›</button></div>';
+if(dayD!=t)h+='<p style="text-align:center;margin:6px 0"><button class="s" onclick="dayD=td();render()">Back to today</button></p>';
+h+='<h2>Events</h2>'+(ev.length?ev.map(function(e){return'<div class="card">'+esc(e.title)+(e.yearly?' <span class="mut">(every year)</span>':"")+'</div>'}).join(""):'<p class="mut">No events on this day.</p>');
+h+='<h2>Activities'+(tk.length?': '+dn+' of '+tk.length+' done':'')+'</h2>'+(tk.length?tk.map(taskRow).join(""):'<p class="mut">No activities planned for this day.</p>');
+return h}
+function vFin(){var m=td().slice(0,7),tx=S.tx.filter(function(x){return finP=="all"||x.date.slice(0,7)==m}),inc=0,exp=0;
+tx.forEach(function(x){if(x.type=="income")inc+=x.amt;else exp+=x.amt});
+var sv=Math.max(0,inc-exp),db=Math.max(0,exp-inc),lbl=finP=="all"?"in total":"this month";
+var h='<h1>Finances</h1><div class="tabs"><button class="'+(finP=="month"?"":"s")+'" onclick="finP=\'month\';render()">This month</button><button class="'+(finP=="all"?"":"s")+'" onclick="finP=\'all\';render()">All time</button></div>';
+h+='<div class="card"><p style="margin:0">You have earned <b class="inc sans">'+money(inc)+'</b>, spent <b class="exp sans">'+money(exp)+'</b> and saved <b class="sans">'+money(sv)+'</b> '+lbl+'. Your debit is <b class="'+(db?"exp ":"")+'sans">'+money(db)+'</b>.</p></div>';
+h+=db?'<div class="alert bad">Your spending is higher than your income by '+money(db)+'.</div>':(tx.length?'<div class="alert ok">You are not in debit.</div>':'');
+h+='<div class="card"><div class="row"><div class="g">Earned<br><b class="inc sans">'+money(inc)+'</b></div><div class="g">Spent<br><b class="exp sans">'+money(exp)+'</b></div></div><div class="row" style="margin-top:10px"><div class="g">Saved<br><b class="sans">'+money(sv)+'</b></div><div class="g">Debit<br><b class="sans '+(db?"exp":"")+'">'+money(db)+'</b></div></div></div>';
+h+='<h2>Messages</h2>';
+var l=tx.slice().sort(function(a,b){return a.date<b.date?1:-1}).slice(0,40);
+h+=l.length?l.map(function(x){var inc=x.type=="income";return'<div class="card"><div class="'+(inc?"inc":"exp")+' sans"><b>'+(inc?"Income received":"Expense")+'</b></div><div>'+(inc?"You received <b>"+money(x.amt)+"</b>"+(x.note?" from "+esc(x.note):""):"You spent <b>"+money(x.amt)+"</b> on "+esc(x.note||x.cat)+" ("+esc(x.cat)+")")+'.</div><div class="mut">'+nice(x.date)+'</div></div>'}).join(""):'<p class="mut">No income or expenses recorded yet. Add them in the Finance tab.</p>';
+if(l.length>=40)h+='<p class="mut">Showing the latest 40 messages.</p>';
+return h}
+function vAbout(){return'<h1>About</h1><div class="card"><h2 style="margin:0 0 4px">Do-2-day</h2><div class="mut">Version 1.0</div><p>Plan your day, stay in touch with the people you care about and keep track of your money, all in one place.</p></div>'
++'<h2>What it does</h2><div class="card"><p style="margin:0 0 8px"><b>Today and My day:</b> plan activities, tick them off and see what is done and what is left.</p><p style="margin:0 0 8px"><b>Calendar:</b> keep events such as birthdays and anniversaries, with yearly repeats.</p><p style="margin:0 0 8px"><b>Calls:</b> set how often to call family and friends, and get two people from your contacts each day to call.</p><p style="margin:0 0 8px"><b>Finance:</b> record income and expenses, see spending by category, and set a budget and a savings goal.</p><p style="margin:0 0 8px"><b>Reminders:</b> alerts and sounds for activities and events while the app is open.</p><p style="margin:0"><b>Profile and Style:</b> your personal details, colors and wallpaper.</p></div>'
++'<h2>Your data</h2><div class="card"><p style="margin:0 0 8px">Everything is stored on this device only. There is no account and nothing is sent to an online server.</p><p style="margin:0">Use Export data in the Finance tab to keep a backup. Clearing your browser data erases the app’s data.</p></div>'
++'<h2>Copyright</h2><div class="card" style="text-align:center"><p style="margin:0 0 8px">© 2026 Derick Malelo and ElectroCat Company Ltd.<br>All rights reserved.</p><img src="electrocat-logo.png" alt="ElectroCat logo" width="56" height="56" style="border-radius:50%;background:#fff"></div>'}
 function pickAcc(c){ss("accent",c);render()}
 function setWp(k){ss("wp",k);render()}
 function readImg(f,max,sq,q,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var c=document.createElement("canvas"),w=im.width,h=im.height;if(sq){var m=Math.min(w,h);c.width=c.height=max;c.getContext("2d").drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,max,max)}else{var k=Math.min(1,max/Math.max(w,h));c.width=Math.round(w*k);c.height=Math.round(h*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height)}cb(c.toDataURL("image/jpeg",q))};im.src=r.result};r.readAsDataURL(f)}
@@ -220,8 +248,8 @@ if(tx.length)h+='<h2>Recent</h2>'+tx.map(function(x){return'<div class="card row
 h+='<h2>Backup</h2><div class="row"><button class="s" onclick="exportData()">Export data</button><label class="mut">Restore: <input type="file" accept=".json" onchange="importData(event)"></label></div><p class="mut">Data is stored only on this device. Export a backup now and then.</p>';
 return h}
 
-function render(){var y=window.scrollY,V={today:vToday,cal:vCal,calls:vCalls,money:vMoney,set:vSet,me:vMe};
-document.getElementById("app").innerHTML=(T=="me"?"":topbar())+V[T]();
+function render(){var y=window.scrollY,V={today:vToday,cal:vCal,calls:vCalls,money:vMoney,set:vSet,me:vMe,day:vDay,fin:vFin,about:vAbout};
+document.getElementById("app").innerHTML=topbar(T=="me")+V[T]();
 var N={today:"Today",cal:"Calendar",calls:"Calls",money:"Finance",set:"Style"};
 document.getElementById("nav").innerHTML=Object.keys(N).map(function(k){return'<button class="'+(k==T?"on":"")+'" onclick="go(\''+k+'\')">'+N[k]+'</button>'}).join("");
 window.scrollTo(0,y)}
