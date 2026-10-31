@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>ElectroCat Music</title>
+<style>
+:root{--bg:#0f1115;--card:#181b22;--ink:#eef1f6;--mut:#98a2b3;--line:#262b35;--ac:#4f8cff;--ac2:#22d3c5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px)}
+#app{max-width:640px;margin:0 auto;padding:10px 14px 190px}
+h1{font-size:1.5rem;margin:6px 0}h2{font-size:1.05rem;margin:18px 0 8px}
+.hd{display:flex;align-items:center;justify-content:space-between}
+.mut{color:var(--mut);font-size:.88rem}
+.row{display:flex;align-items:center;gap:10px}.g{flex:1;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-size:.95rem}
+.btn.s{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.on{background:var(--ac2);color:#06201d}
+.ib{background:none;border:0;color:var(--ink);padding:10px;font-size:1.25rem;border-radius:10px}
+.in{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:1rem}
+.song{display:flex;align-items:center;gap:12px;padding:9px 2px;border-bottom:1px solid var(--line)}
+.art{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;color:#fff}
+.t{flex:1;min-width:0}.t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}.t span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.song.playing b{color:var(--ac2)}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:14px 0;font-size:.95rem}
+nav button.on{color:var(--ac2);font-weight:700;box-shadow:inset 0 3px 0 var(--ac2)}
+.mini{position:fixed;left:0;right:0;z-index:19;background:#1d2230;border-top:1px solid var(--line);display:none;align-items:center;gap:10px;padding:8px 12px}
+.mini .art{width:40px;height:40px}.mini .pb{position:absolute;left:0;top:0;height:2px;background:var(--ac2);width:0}
+.now{position:fixed;inset:0;z-index:40;background:linear-gradient(160deg,#15234a,#0f1115 60%);display:none;overflow:auto;padding-top:env(safe-area-inset-top,0px)}
+.nowin{max-width:520px;margin:0 auto;padding:14px 22px 30px}
+.bigart{width:min(70vw,300px);height:min(70vw,300px);margin:22px auto;border-radius:24px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:5rem;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.nt{margin:0;text-align:center;font-size:1.25rem}
+input[type=range]{width:100%;accent-color:var(--ac2);margin:14px 0 2px}
+.ctl{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.ctl .ib{font-size:1.5rem}.ctl .big{width:70px;height:70px;border-radius:50%;background:var(--ac2);color:#06201d;font-size:1.8rem;border:0}
+.dim{opacity:.45}
+.md{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px;z-index:60}
+.mb{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;max-width:360px;width:100%}
+.mb p{margin:0 0 14px}.mb .row{justify-content:flex-end}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:150px;background:#eef1f6;color:#111;padding:10px 16px;border-radius:20px;z-index:70;font-size:.9rem}
+.cr{text-align:center;color:var(--mut);font-size:.78rem;margin-top:26px}
+label.ck{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+label.ck input{width:22px;height:22px;accent-color:var(--ac2)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="mini" class="mini" onclick="openNow()"></div>
+<div id="now" class="now"></div>
+<div id="md" class="md"></div>
+<nav id="nav"></nav>
+<script>
+var K="electrocat.music.v1",T="songs",NAV=[],SONGS=[],SLOAD=false,SCANNING=false,SCANMSG="",Q=[],qi=-1,CUR=null,SEEK=0,mQ="",openPl=null,NOW=false,EXIT=false,PSEL=[],PID=null,MDY=null;
+var NATIVE=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+var S=(function(){try{var d=JSON.parse(localStorage.getItem(K));if(d&&d.pls)return d}catch(e){}return{pls:[],shuf:false,rep:0}})();
+var SHUF=!!S.shuf,REP=S.rep||0,AUD=new Audio();
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function save(){try{S.shuf=SHUF;S.rep=REP;localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function fmt(x){x=Math.floor(x||0);var s=x%60;return Math.floor(x/60)+":"+(s<10?"0":"")+s}
+function toast(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2200)}
+function showMd(h){var m=$("md");m.innerHTML=h;m.style.display="flex"}
+function mdN(){$("md").style.display="none"}
+function mdY(){mdN();if(MDY)MDY()}
+function ask(q,sub,yes,lab){MDY=yes;showMd('<div class="mb"><h2 style="margin:0 0 6px">'+q+'</h2><p class="mut">'+sub+'</p><div class="row"><button class="btn s" onclick="mdN()">No</button><button class="btn" onclick="mdY()">'+(lab||"Yes")+'</button></div></div>')}
+
+/* ---- scanning ---- */
+function mplug(){return window.Capacitor&&((Capacitor.Plugins&&Capacitor.Plugins.Music)||(Capacitor.registerPlugin&&Capacitor.registerPlugin("Music")))}
+function scanDevice(){var pl=mplug();SCANNING=true;SCANMSG="";render();
+if(!pl){SCANNING=false;SLOAD=true;SCANMSG=NATIVE?"denied":"preview";render();return}
+pl.scan().then(function(r){SONGS=((r&&r.songs)||[]).map(function(x){return{id:"n"+x.id,name:String(x.title||x.name||"Unknown").trim(),artist:x.artist||"",path:x.path,dur:(x.duration||0)/1000}}).sort(function(a,b){return a.name.localeCompare(b.name)});SLOAD=true;SCANNING=false;SCANMSG="";render()}).catch(function(){SLOAD=true;SCANNING=false;SCANMSG="denied";render()})}
+
+/* ---- playback ---- */
+function filtered(){var q=mQ.toLowerCase();return SONGS.filter(function(x){return(x.name+" "+x.artist).toLowerCase().indexOf(q)>-1})}
+function playId(id,queue){Q=queue&&queue.length?queue.slice():[id];qi=Q.indexOf(id);if(qi<0){Q=[id];qi=0}start()}
+function start(){var id=Q[qi];CUR=SONGS.filter(function(x){return x.id==id})[0];if(!CUR)return;
+AUD.src=window.Capacitor&&Capacitor.convertFileSrc?Capacitor.convertFileSrc(CUR.path):CUR.path;var p=AUD.play();if(p&&p.catch)p.catch(function(){});setMedia();upd()}
+function nextSong(auto){if(!Q.length)return;if(REP==2&&auto){AUD.currentTime=0;AUD.play();return}
+if(SHUF&&Q.length>1){var n;do{n=Math.floor(Math.random()*Q.length)}while(n==qi);qi=n}else{qi++;if(qi>=Q.length){if(REP==1||!auto)qi=0;else{AUD.pause();qi=Q.length-1;upd();return}}}start()}
+function prevSong(){if(!Q.length)return;if(AUD.currentTime>3){AUD.currentTime=0;return}qi=qi>0?qi-1:Q.length-1;start()}
+function togglePlay(){if(!CUR)return;if(AUD.paused)AUD.play();else AUD.pause()}
+function setMedia(){if("mediaSession"in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:CUR.name,artist:CUR.artist||"ElectroCat Music"});var h=navigator.mediaSession.setActionHandler.bind(navigator.mediaSession);h("play",togglePlay);h("pause",togglePlay);h("nexttrack",function(){nextSong(false)});h("previoustrack",prevSong)}catch(e){}}}
+function playFrom(id){playId(id,filtered().map(function(x){return x.id}))}
+function playAll(shuf){var l=filtered().map(function(x){return x.id});if(!l.length)return;SHUF=shuf;save();playId(shuf?l[Math.floor(Math.random()*l.length)]:l[0],l)}
+AUD.addEventListener("play",upd);AUD.addEventListener("pause",upd);AUD.addEventListener("ended",function(){nextSong(true)});AUD.addEventListener("timeupdate",tick);AUD.addEventListener("loadedmetadata",tick);
+AUD.addEventListener("error",function(){if(CUR)toast("This file can’t be played.")});
+function tick(){var d=AUD.duration||CUR&&CUR.dur||0,pb=$("pb"),sk=$("sk");if(pb)pb.style.width=(d?AUD.currentTime/d*100:0)+"%";if(sk&&!SEEK){sk.max=d;sk.value=AUD.currentTime}var a=$("tc"),b=$("tdur");if(a)a.textContent=fmt(AUD.currentTime);if(b)b.textContent=fmt(d)}
+function initial(x){return esc((x.name||"?").charAt(0).toUpperCase())}
+function upd(){var m=$("mini");
+if(!CUR){m.style.display="none";document.body.dataset.mini="";}else{m.style.display="flex";m.style.bottom=$("nav").offsetHeight+"px";
+m.innerHTML='<div class="pb" id="pb"></div><div class="art">'+initial(CUR)+'</div><div class="t"><b>'+esc(CUR.name)+'</b><span class="mut">'+esc(CUR.artist||"Unknown artist")+'</span></div><button class="ib" onclick="event.stopPropagation();togglePlay()" aria-label="Play or pause">'+(AUD.paused?"▶":"⏸")+'</button><button class="ib" onclick="event.stopPropagation();nextSong(false)" aria-label="Next">⏭</button>';tick()}
+if(NOW)drawNow()}
+function openNow(){if(!CUR)return;NOW=true;$("now").style.display="block";drawNow()}
+function closeNow(){NOW=false;$("now").style.display="none"}
+function drawNow(){if(!CUR){closeNow();return}$("now").innerHTML='<div class="nowin"><div class="row" style="justify-content:space-between"><button class="ib" onclick="closeNow()" aria-label="Close">⌄</button><div class="mut">Now playing</div><button class="ib" onclick="plPicker(\''+CUR.id+'\')" aria-label="Add to playlist">＋</button></div><div class="bigart">♪</div><h2 class="nt">'+esc(CUR.name)+'</h2><div class="mut" style="text-align:center">'+esc(CUR.artist||"Unknown artist")+'</div><input id="sk" type="range" min="0" max="'+(AUD.duration||CUR.dur||0)+'" step="1" value="'+AUD.currentTime+'" oninput="SEEK=1;AUD.currentTime=this.value" onchange="SEEK=0"><div class="row mut" style="justify-content:space-between"><span id="tc">'+fmt(AUD.currentTime)+'</span><span id="tdur">'+fmt(AUD.duration||CUR.dur)+'</span></div><div class="ctl"><button class="ib '+(SHUF?"":"dim")+'" onclick="SHUF=!SHUF;save();upd()" aria-label="Shuffle">🔀</button><button class="ib" onclick="prevSong()" aria-label="Previous">⏮</button><button class="big" onclick="togglePlay()" aria-label="Play or pause">'+(AUD.paused?"▶":"⏸")+'</button><button class="ib" onclick="nextSong(false)" aria-label="Next">⏭</button><button class="ib '+(REP?"":"dim")+'" onclick="REP=(REP+1)%3;save();upd()" aria-label="Repeat">'+(REP==2?"🔂":"🔁")+'</button></div></div>'}
+
+/* ---- playlists ---- */
+function plOf(id){return S.pls.filter(function(p){return p.id==id})[0]}
+function plSongs(p){return p.ids.map(function(i){return SONGS.filter(function(x){return x.id==i})[0]}).filter(Boolean)}
+function newPl(){var n=($("pn").value||"").trim();if(!n)return;S.pls.push({id:uid(),name:n,ids:[]});save();render()}
+function delPl(id){ask("Delete this playlist?","The songs stay on your phone.",function(){S.pls=S.pls.filter(function(p){return p.id!=id});if(openPl==id)openPl=null;save();render()},"Delete")}
+function renamePl(id){var p=plOf(id);showMd('<div class="mb"><h2 style="margin:0 0 10px">Rename playlist</h2><input class="in" id="rn" value="'+esc(p.name)+'"><div class="row" style="margin-top:12px"><button class="btn s" onclick="mdN()">Cancel</button><button class="btn" onclick="doRename(\''+id+'\')">Save</button></div></div>')}
+function doRename(id){var n=($("rn").value||"").trim();if(n){plOf(id).name=n;save()}mdN();render()}
+function playPl(pid,sid){var l=plSongs(plOf(pid)).map(function(x){return x.id});if(!l.length)return;playId(sid||l[0],l)}
+function rmFromPl(pid,sid){var p=plOf(pid);p.ids=p.ids.filter(function(i){return i!=sid});save();render()}
+function addToPl(pid,sid){var p=plOf(pid);if(p.ids.indexOf(sid)<0)p.ids.push(sid);save();mdN();toast("Added to "+p.name);if(T=="pls")render()}
+function createAdd(sid){var n=($("pn2").value||"").trim();if(!n)return;S.pls.push({id:uid(),name:n,ids:[sid]});save();mdN();toast("Added to "+n);if(T=="pls")render()}
+function plPicker(sid){showMd('<div class="mb"><h2 style="margin:0 0 10px">Add to playlist</h2>'+S.pls.map(function(p){return'<button class="btn s" style="width:100%;margin-bottom:6px" onclick="addToPl(\''+p.id+'\',\''+sid+'\')">'+esc(p.name)+' ('+p.ids.length+')</button>'}).join("")+'<input class="in" id="pn2" placeholder="New playlist name" style="margin:6px 0"><button class="btn" style="width:100%" onclick="createAdd(\''+sid+'\')">Create and add</button><button class="btn s" style="width:100%;margin-top:6px" onclick="mdN()">Cancel</button></div>')}
+function pickList(q){q=(q||"").toLowerCase();var e=$("pk2");if(!e)return;e.innerHTML=SONGS.filter(function(x){return(x.name+" "+x.artist).toLowerCase().indexOf(q)>-1}).slice(0,300).map(function(x){return'<label class="ck"><input type="checkbox" '+(PSEL.indexOf(x.id)>-1?"checked ":"")+'onchange="togSel(\''+x.id+'\',this.checked)"><span class="g">'+esc(x.name)+'</span></label>'}).join("")||'<p class="mut">No match.</p>'}
+function togSel(id,on){var i=PSEL.indexOf(id);if(on&&i<0)PSEL.push(id);if(!on&&i>-1)PSEL.splice(i,1)}
+function addSongsUI(pid){if(!SONGS.length){showMd('<div class="mb"><p>No songs found yet.</p><button class="btn" style="width:100%" onclick="mdN()">OK</button></div>');return}PID=pid;PSEL=plOf(pid).ids.slice();showMd('<div class="mb"><h2 style="margin:0 0 8px">Choose songs</h2><input class="in" placeholder="Search songs" oninput="pickList(this.value)"><div id="pk2" style="max-height:48vh;overflow:auto;margin:8px 0"></div><div class="row"><button class="btn s" onclick="mdN()">Cancel</button><button class="btn" onclick="savePick()">Done</button></div></div>');pickList("")}
+function savePick(){var p=plOf(PID),keep=p.ids.filter(function(i){return PSEL.indexOf(i)>-1});PSEL.forEach(function(i){if(keep.indexOf(i)<0)keep.push(i)});p.ids=keep;save();mdN();render();toast("Playlist updated")}
+
+/* ---- views ---- */
+function songRow(x,onclick,extra){return'<div class="song'+(CUR&&CUR.id==x.id?" playing":"")+'"><div class="art">'+initial(x)+'</div><div class="t" onclick="'+onclick+'"><b>'+esc(x.name)+'</b><span class="mut">'+esc(x.artist||"Unknown artist")+(x.dur?" · "+fmt(x.dur):"")+'</span></div>'+extra+'</div>'}
+function songList(){var l=filtered();return l.length?l.map(function(x){return songRow(x,"playFrom('"+x.id+"')",'<button class="ib" onclick="plPicker(\''+x.id+'\')" aria-label="Add to playlist">＋</button>')}).join(""):'<p class="mut">'+(SONGS.length?"No match.":"No songs found.")+'</p>'}
+function vSongs(){var h='<div class="hd"><h1>Songs</h1><button class="ib" onclick="scanDevice()" aria-label="Refresh">↻</button></div>';
+if(SCANMSG=="denied")return h+'<div class="card"><p style="margin:0 0 10px">Music access is off. Allow it so the app can find the songs on your phone.</p><button class="btn" onclick="scanDevice()">Allow music access</button><p class="mut" style="margin:10px 0 0">If nothing appears, open your phone Settings → Apps → ElectroCat Music → Permissions and allow Music and audio.</p></div>';
+if(SCANMSG=="preview")return h+'<div class="card"><p style="margin:0">Scanning works inside the installed Android app. Install the app file to see your songs here.</p></div>';
+if(!SLOAD||SCANNING)return h+'<p class="mut">Looking for music on your phone…</p>';
+h+='<div class="row" style="margin:6px 0 10px"><button class="btn g" onclick="playAll(false)">▶ Play all</button><button class="btn s g" onclick="playAll(true)">🔀 Shuffle</button></div><input class="in" placeholder="Search songs or artists" value="'+esc(mQ)+'" oninput="mQ=this.value;$(\'sl\').innerHTML=songList()"><div class="mut" style="margin:8px 0 2px">'+SONGS.length+' songs found</div><div id="sl">'+songList()+'</div>';return h}
+function vPls(){var p=openPl?plOf(openPl):null;
+if(p){var l=plSongs(p),h='<div class="row"><button class="ib" onclick="openPl=null;render()" aria-label="Back">‹</button><h1 class="g" style="margin:0">'+esc(p.name)+'</h1></div><div class="row" style="margin:10px 0"><button class="btn g" onclick="playPl(\''+p.id+'\')">▶ Play</button><button class="btn s g" onclick="addSongsUI(\''+p.id+'\')">Add songs</button></div>';
+h+=l.length?l.map(function(x){return songRow(x,"playPl('"+p.id+"','"+x.id+"')",'<button class="ib" onclick="rmFromPl(\''+p.id+'\',\''+x.id+'\')" aria-label="Remove from playlist">✕</button>')}).join(""):'<p class="mut">This playlist is empty. Tap Add songs.</p>';
+return h+'<div class="row" style="margin-top:18px"><button class="btn s g" onclick="renamePl(\''+p.id+'\')">Rename</button><button class="btn s g" onclick="delPl(\''+p.id+'\')">Delete playlist</button></div>'}
+var h='<h1>Playlists</h1><div class="card"><input class="in" id="pn" placeholder="New playlist name"><button class="btn" style="width:100%;margin-top:10px" onclick="newPl()">Create playlist</button></div>';
+return h+(S.pls.length?S.pls.map(function(q){return'<div class="song"><div class="art">♫</div><div class="t" onclick="openPl=\''+q.id+'\';render()"><b>'+esc(q.name)+'</b><span class="mut">'+plSongs(q).length+' songs</span></div><button class="btn s" onclick="playPl(\''+q.id+'\')">Play</button></div>'}).join(""):'<p class="mut">No playlists yet. Create one above.</p>')}
+function render(){var y=window.scrollY;$("app").innerHTML=(T=="songs"?vSongs():vPls())+'<div class="cr">© Derick Malelo and ElectroCat Company Ltd</div>';
+$("nav").innerHTML='<button class="'+(T=="songs"?"on":"")+'" onclick="go(\'songs\')">Songs</button><button class="'+(T=="pls"?"on":"")+'" onclick="go(\'pls\')">Playlists</button>';window.scrollTo(0,y);upd()}
+
+/* ---- navigation and Back button ---- */
+function go(t){if(t==T)return;if(NAV.length&&NAV[NAV.length-1]==t)NAV.pop();else NAV.push(T);if(NAV.length>20)NAV.shift();T=t;if(t!="pls")openPl=null;render()}
+function exitApp(){try{var A=Capacitor.Plugins.App;if(A&&A.exitApp){A.exitApp();return}}catch(e){}}
+function backAction(){var m=$("md");
+if(m.style.display=="flex"){mdN();return}
+if(NOW){closeNow();return}
+if(T=="pls"&&openPl){openPl=null;render();return}
+if(NAV.length){T=NAV.pop();render();return}
+if(EXIT){exitApp();return}
+EXIT=true;toast("Press back again to exit");setTimeout(function(){EXIT=false},2000)}
+try{var APP=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(APP&&APP.addListener)APP.addListener("backButton",backAction)}catch(e){}
+render();
+if(NATIVE)scanDevice();else{SLOAD=true;SCANMSG="preview";render()}
+</script>
+</body>
+</html>
